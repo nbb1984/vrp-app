@@ -80,31 +80,39 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.use('/', routes);
-app.use('/', users);
 // // -------------------------------------------------
-// Main "/" Route. This will redirect the user to our rendered React application
-// app.get("/", function(req, res) {
-//   res.sendFile(__dirname + "/public/index.html");
-// });
-// // This is the route we will send GET requests to retrieve our most recent search data.
-// // We will call this route the moment our page gets rendered
-app.get("/api", function(req, res) {
-	console.log('got this far');
-  // We will find all the records, sort it in descending order, then limit the records to 5
-  User.findOne({})
+console.log("server js ran");
 
-  .exec(function(err, doc) {
-    if (err) {
-      console.log(err);
-    }
-    else {
-      res.send(doc);
-    }
-  });
+app.get("/register", function(req, res) {
+  console.log("go to registration");
+  res.sendFile(__dirname + "/public/registration.html");
 });
 
+app.get("/login?success", function(req, res) {
+  console.log("anything happen?");
+  console.log(__dirname);
+  res.sendFile(__dirname + "/public/login.html");
+});
 
+app.get("/login", function(req, res) {
+  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  console.log(__dirname + "/public/login.html");
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  res.sendFile(__dirname + "/public/login.html");
+});
+app.get("/user", function(req, res) {
+  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+  console.log(__dirname + "/public/index2.html");
+  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
+  res.sendFile(__dirname + "/public/index2.html");
+});
+
+// // This is the route we will send GET requests to retrieve our most recent search data.
+// // We will call this route the moment our page gets rendered
+
+
+app.use('/', routes);
+app.use('/', users);
 
 // -------------------------------------------------
 // Listener

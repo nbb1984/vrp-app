@@ -18,7 +18,7 @@ var IndexRoute = router.IndexRoute;
 // Reference the high-level components
 var Main = require("../components/Main");
 var Login = require("../components/children/Login");
-var Register = require("../components/children/Register");
+var MostPopular = require("../components/children/MostPopular");
 var Userpage = require("../components/children/Userpage");
 
 
@@ -29,17 +29,14 @@ module.exports= (
         // The high level component is the Router component
         <Router history={hashHistory}>
           <Route path="/" component={Main}>
-            {/* If user selects Login then show the appropriate component*/}
-            <Route path="Login" component={Login}>
-            </Route>
-            {/* If user selects Register then show the appropriate component*/}
-            <Route path="Register" component={Register} />
-            {/* If password works, go to Login page*/}
-            <Route path="Userpage" component={Userpage}>
-            </Route>
+            {/* If user selects Favorite Places then show the appropriate component*/}
+            <Route path="Userpage" component={Userpage}/>
+            <Route path="MostPopular" component={MostPopular}/>
+            
+            <IndexRoute component={Userpage} />
             {/* If user selects any other path... we get the Home Route */}
-            <IndexRoute component={Login} />
+            
           </Route>
         </Router>
-      );
+      ); 
       

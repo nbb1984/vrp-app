@@ -15,10 +15,10 @@ var UserSchema = new Schema({
   name: {
   	type: String
   },
-  newRegistration: {
-    type: Boolean,
-    default: true
-  }
+  searches: [{
+    type: Schema.Types.ObjectId,
+    ref: "Search"
+  }]
 });
 
 var User = mongoose.model("User", UserSchema);

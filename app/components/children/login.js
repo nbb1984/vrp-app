@@ -7,7 +7,7 @@ var Login = React.createClass({
   // Here we set a generic state associated with the text being searched for
   getInitialState: function() {
     console.log("thing");
-    return { username: "", password: "", visible: false, successMsg: [], errorMsg: [] };
+    return { username: "", password: "", visible: false, successMsg: [], errorMsg: [], username: "" };
   },
 
    // The moment the page renders find out if the user just registered by pulling from sessionStorage
@@ -16,11 +16,12 @@ var Login = React.createClass({
         sessionStorage.removeItem("newRegistration");
         this.setState({successMsg: ["Thank you for registering! You may now login."]});
       } 
-      if (localStorage.vrpUsername) {
-        console.log(localStorage.vrpUsername);
-        helpers.getHistory(localStorage.vrpUsername).then(function(response){
-          this.setState({username: response.data.username});
-        }.bind(this))
+      if (localStorage._id) {
+        var that = this;
+        console.log(localStorage._id);
+        that.props.setLogOut(localStorage._id, function(userdata){
+          that.setState({username: userdata.data.username});
+        });     
       }
   },
 
@@ -33,36 +34,38 @@ var Login = React.createClass({
   },
   // When a user submits...
   handleSubmit: function(event) {
+    var that = this;
     if (sessionStorage.newRegistration) {
       sessionStorage.removeItem("newRegistration");
     }
     // prevent the HTML from trying to submit a form if the user hits "Enter" instead of
     // clicking the button
-    event.preventDefault();
-    console.log('handleSubmit!!!!');
     // Set the parent to have the search term
     //this.props.setTerm(this.state.username, this.state.password);
     helpers.login(this.state.username, this.state.password)
       .then(function(response){
         console.log(response);
         if (response) {
-          localStorage.setItem("vrpUsername", response.data.username);
-          this.setState({username: response.data.username});
-          this.props.setLogOut();
+          var id = response.data._id;
+          localStorage.setItem("_id", response.data._id);
+          // Update the userpage with the new login information.
+          that.props.setLogOut(localStorage._id, function(userdata){
+            console.log(userdata);
+            that.setState({username: userdata.data.username});
+          });   
         } else {
-          this.setState({errorMsg: ["There was an error logging in.  Check your username and password."], loggedIn: false});
-          console.log(this.state.username);
+          that.setState({errorMsg: ["There was an error logging in.  Check your username and password."], loggedIn: false});
+          console.log(that.state.errorMsg);
         }
         //this.setState({username: response.data.username, email: response.data.email, loggedIn: true);
     }.bind(this)).catch(function(err){
-      this.setState({errorMsg: ["There was an error logging in.  Check your username and password."]})
+      this.setState({errorMsg: ["There was an error logging in.  Check your username and/or password."]})
     }.bind(this));
     //this.setState({ username: "" , password: ""});
   },
 
   render: function() {
-    
-    if (localStorage.vrpUsername) {
+    if (localStorage._id) {
       return (
         <div className="container">
           <div className="col-lg-12">

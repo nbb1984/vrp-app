@@ -2,63 +2,54 @@ var express = require('express');
 var router = express.Router();
 var passport = require('passport');
 var LocalStrategy = require('passport-local').Strategy;
-
+var app = express();
 var User = require('../models/user');
-
-// Register
-router.get('/register', function(req, res){
-	res.redirect('/register');
-});
-
-//Getting User Data
-router.get('/userData/:user', function(req, res){
-	console.log("getting user");
-  var query = {username: req.params.user};
-  User.findOne(query).exec(function(err, doc){
-  	res.json(doc);
-  });
-});
 
 // Register User
 router.post('/registerUser', function(req, res){
 	console.log("register user backend");
+  console.log(req.body);
 	
-	var name = req.body.name;
+  var username = req.body.username;
 	var email = req.body.email;
-	var username = req.body.username;
 	var password = req.body.password;
 	var password2 = req.body.password2;
 
 	// Validation
-	req.checkBody('name', 'Name is required').notEmpty();
+  req.checkBody('username', 'Username is required').notEmpty();
 	req.checkBody('email', 'Email is required').notEmpty();
 	req.checkBody('email', 'Email is not valid').isEmail();
-	req.checkBody('username', 'Username is required').notEmpty();
 	req.checkBody('password', 'Password is required').notEmpty();
 	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
 	var errors = req.validationErrors();
+
 	if(errors){
-		res.json(errors);
+    console.log(errors);
+    res.json(errors);
+
+
 	} else {
+    console.log("registered!!!!!!!!!!!!!!!!!!!!!!");
 		var newUser = new User({
-			name: name,
-			email:email,
+			email: email,
 			username: username,
 			password: password
 		});
 
 		User.createUser(newUser, function(err, user){
 			if(err) throw err;
-				req.flash('success_msg', 'You are registered and can now login');	
-				res.json(user);		
-		});
+      console.log(user);
+		})
 
-		
-		console.log('redirecting!!!!!');
+    req.flash('success_msg', 'You are registered and can now login');
+    res.status(200);
+    res.redirect('/login?success');
+
 
 	}
 });
+
 
 passport.use(new LocalStrategy(
   function(username, password, done) {
@@ -89,34 +80,88 @@ passport.use(new LocalStrategy(
 
 passport.serializeUser(function(user, done) {
 	console.log("user serialized");
+  console.log(user.id);
+  console.log("user serialized");
   done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
   User.getUserById(id, function(err, user) {
-  	console.log("user deserializeUser");
+
   	console.log(err);
     done(err, user);
   });
 });
 
+router.get("/userData", function(req, res) {
+  console.log("got this");
+  console.log(req.user);
+  console.log("got this");
+  var id = req.user._id;
+  var username = req.user.username; 
+  var email = req.user.email; 
+  var searches = req.user.searches;
+  console.log(id);
+  res.json({id, username, email, searches});
+  // User.findOne({ "_id": req.user._id })
+  //   // ..and populate all of the Searchs associated with it
+  //   .populate("searches")
+  //   // now, execute our query
+  //   .exec(function(error, doc) {
+  //     // Log any errors
+  //     console.log(doc);
+  //     if (error) {
+  //       console.log(error);
+  //     }
+  //     // Otherwise, send the doc to the browser as a json object
+  //     else {
+  //       res.json(doc);
+  //     }
+  //   });
+  });
+// Create a new Search or replace an existing Search
+router.post("/user/:id/search", function(req, res) {
+  // Create a new Search and pass the req.body to the entry
+  var newSearch = new Search(req.body);
+  // And save the new Search the db
+  newSearch.save(function(error, doc) {
+    // Log any errors
+    if (error) {
+      console.log(error);
+    }
+    // Otherwise
+    else {
+      console.log('Search coming');
+      console.log(doc);
+      // Use the article id to find and update it's Search
+       User.findOneAndUpdate({ "_id": req.params.id }, { $push: { "searches": doc._id } }, { new: true }, function(err, newdoc) {
+            // Send any errors to the browser
+            if (err) {
+              res.send(err);
+            }
+            // Or send the newdoc to the browser
+            else {
+              console.log('this happened');
+              return res.json(newdoc);
+            }
+        });
+      }
+    });
+  });
+
+
 router.post('/loginUser',
-  passport.authenticate('local'),
+  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/login?error', failureFlash: true}),
   function(req, res) {
-  	if (req.user){
-  		return res.send(req.user);
-  	}
-  	else {
-	    res.send("Username and/or password were invalid");
-  	}
+	    res.redirect("/");
   });
 
 router.get('/logout', function(req, res){
 	req.logout();
-
+  console.log("You are logged out!!!!!!!!!!");
 	req.flash('success_msg', 'You are logged out');
 
-	//res.redirect('/login');
+	res.redirect('/login');
 });
 
 module.exports = router;
