@@ -8,8 +8,12 @@ var SearchSchema = new Schema({
   query: {
     type: String
   },
-  userId: {
-  	type: String
+  hits: {
+  	type: Number
+  },
+  date: { 
+  	type: Date, 
+  	default: Date.now 
   }
 });
 // Remember, Mongoose will automatically save the ObjectIds of the searches

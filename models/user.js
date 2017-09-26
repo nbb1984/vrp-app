@@ -18,6 +18,10 @@ var UserSchema = new Schema({
   searches: [{
     type: Schema.Types.ObjectId,
     ref: "Search"
+  }],
+  friends: [{
+    type: Schema.Types.ObjectId,
+    ref: "User"
   }]
 });
 

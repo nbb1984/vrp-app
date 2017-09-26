@@ -6,14 +6,17 @@ $(document).ready(function(){
 	// $(".email").val("nick@thing.com");
 	// $(".password").val("google34");
 	// $(".password2").val("google34");
+	$(".submit-button").on("click", function() {
+		$(".msg").html("");
+		registerUser();
+	});
 	
-	var registerUser = function(){
+	var registerUser = function() {
 		
 		var username = $(".username").val(),
 			email = $(".email").val(),
 			password = $(".password").val(),
 			password2 = $(".password2").val();
-		console.log(username, email, password, password2);
 
 	    $.post("/registerUser", {username: username, password: password, password2: password2, email: email}).then(function(result) {
 	    	console.log(result);
@@ -22,19 +25,11 @@ $(document).ready(function(){
 		    		$("<div class='alert alert-danger text-center' role='alert'>)").text(result[i].msg).appendTo(".msg");
 		    	}
 	    	}
-	    	else {
-	    		
+	    	else {	    		
 	    		window.location.replace("http://localhost:3000/login?success");
 	    	}
 
 	    });	    
 	}
-
-	$(".submit-button").on("click", function() {
-		registerUser();
-	});
-
-
-
 });
 

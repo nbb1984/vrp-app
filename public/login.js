@@ -1,5 +1,7 @@
 $(document).ready(function(){
 	console.log("hello");
+	$(".username").val("billybob");
+	$(".password").val("Welcome07");
 
 	if (window.location.search.substring(1) === "error"){
 		console.log('got this far');

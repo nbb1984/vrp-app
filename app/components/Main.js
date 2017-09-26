@@ -11,24 +11,73 @@ var helpers = require("./utils/helpers");
 // Creating the Main component
 var Main = React.createClass({
   // Here we set a generic state associated with the username and pword fields
-  // Note how we added in this history state variable
+  // Note how we added in that history state variable
   getInitialState: function() {
     console.log("thing!!!!!!!!!!!!")
-    return {_id: "", email: "", searches: "", username: ""};
+    return {_id: "", email: "", searches: "", username: "", popSearches:[]};
 
   },
 
   componentWillMount: function() {
+      var that = this;
+      helpers.getUser().then(function(userdata){
+        var id = userdata.data._id;
+        var email = userdata.data.email;
+        var searches = userdata.data.searches;
+        var username = userdata.data.username;
+        that.setState({_id: id, email:email, searches:searches, username: username});
+        console.log(that.state);
+      });
+
+      helpers.getSearches().then(function(searchData){
+        console.log(searchData);
+        that.setState({popSearches: searchData.data})
+      });
+  },
+   // If the component changes (i.e. if a search is entered)...
+
+
+  handleChange: function(event) {
+      this.setState({ searchTerm: event.target.value });
+  },
+
+  handleGo: function () {
+      window.location.replace("google.html");
+  },
+
+  handleSubmit: function() {
+     event.preventDefault();
+     var that = this;
+    // Run the query for the address
+    helpers.runQuery(that.state.searchTerm).then(function(data) {
+      if (data !== that.state.results) {
+        console.log("Address", data);
+        console.log(data.formatted);
+        that.setState({ resultsAddress: data.formatted, resultsCoords: data.geometry});
+        sessionStorage.setItem("lat", that.state.resultsCoords.lat);
+        sessionStorage.setItem("lng", that.state.resultsCoords.lng);
+        console.log(that.state._id, that.state.resultsAddress);
+        // After we've received the result... then post the search term to our searches.
+        helpers.postSearchQuery(that.state.resultsAddress).then(function(response) {
+          console.log("Updated!");
+          that.setState({searches: response.data.searches });         // After we've done the post... then get the updated searches
+          helpers.getSearches().then(function(searchData){
+            console.log(searchData);
+            that.setState({popSearches: searchData.data})
+          });
+        });
+      }
+    });
+  },
+
+  handleDelete: function (event) {
     var that = this;
-    console.log("trying to get user");
-    helpers.getUser().then(function(userdata){
-      console.log(userdata);
-      var id = userdata.data.id;
-      var email = userdata.data.email;
-      var searches = userdata.data.searches;
-      var username = userdata.data.username;
-      that.setState({_id: id, email:email, searches:searches, username: username});
-      console.log(that.state);
+    console.log("Clicked delete!!!!!");
+    console.log(event.target.value);
+    console.log(that.state._id);
+    helpers.deleteSearch(event.target.value, that.state._id).then(function(response){
+        console.log(response);      
+        that.setState({searches: response.data.searches });
     });
   },
 
@@ -40,8 +89,8 @@ var Main = React.createClass({
   render: function() {
     const that = this;
     var kid;
-    const children = React.Children.map(this.props.children, function(child) {
-            kid = React.cloneElement(child, { _id: that.state._id, email: that.state.email, searches: that.state.searches, username: that.state.username});
+    const children = React.Children.map(that.props.children, function(child) {
+            kid = React.cloneElement(child, { _id: that.state._id, email: that.state.email, searches: that.state.searches, username: that.state.username, address: that.state.results, handleDelete: that.handleDelete, popSearches: that.state.popSearches});
           });
     return (
       <div className = "component">
@@ -62,23 +111,23 @@ var Main = React.createClass({
                 <li className="active"><span className="sr-only">(current)</span></li>
                 <li></li>
               </ul>
-              <form className="navbar-form navbar-left">
+              <form className="navbar-form navbar-left" onSubmit= {that.handleSubmit}>
                 <div className="form-group">
-                  <input type="text" className="form-control" placeholder="Search"></input>
+                  <input type="text" className="form-control" placeholder="Search" onChange={that.handleChange}></input>
                 </div>
                 <button type="submit" className="btn btn-default">Submit</button>
               </form>
                   <a className="navbar-brand" href="#" >Virtual Reality Passport</a>
               <ul className="nav navbar-nav navbar-right" m="middle">
-                <li><a href="login.html" onClick= {this.handleLogout} style={{color: "white"}}>{this.state.status}</a></li>
+                <li><a href="login.html" onClick= {that.handleLogout} style={{color: "white"}}>{that.state.status}</a></li>
                 <li className="dropdown">
                   <a href="#" className="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Menu <span className="caret"></span></a>
                   <ul className="dropdown-menu">
-                    <li><a href="#">Friends</a></li>
+                    <li><Link to="/allUsers">Friends</Link></li>
                     <li><Link to="/MostPopular">Most Popular</Link></li>
-                    <li><Link to="/Userpage">Back to Home</Link></li>
+                    <li><Link to="/">Back to Home</Link></li>
                     <li role="separator" className="divider"></li>
-                    <li><a href="login.html" onClick= {this.handleLogout}>Logout</a></li>
+                    <li><a href="login.html" onClick= {that.handleLogout}>Logout</a></li>
                   </ul>
                 </li>
               </ul>
@@ -89,19 +138,19 @@ var Main = React.createClass({
           <div className="jumbotron" style={{backgroundColor:"transparent !important", border: "1px solid #1da1f2"}}>
             <div className= "row">
               <div className= "col-md-7">
-                <h2><strong>Hello, {this.state.username}. Welcome to VRP.</strong></h2>
+                <h2><strong>Hello, {that.state.username}. Welcome to VRP.</strong></h2>
                 <p><em>Are you ready for a journey through the world in 3D?</em></p>
                 <br></br>
-                <p><em>("Go!" button can link to the 3D element separately, or we can try to incorporate the search bar directly)</em></p>
+                <p><em>Search result...{that.state.resultsAddress}</em></p>
                 <hr />
               </div>
               <div className="col-md-5">
-                <button type="button" className="btn btn-secondary btn-lg" style={{backgroundColor:"transparent !important", border: "1px solid #1da1f2", color: "#1da1f2"}}>go!</button>
+                <button type="button" className="btn btn-secondary btn-lg" style={{backgroundColor:"transparent !important", border: "1px solid #1da1f2", color: "#1da1f2"}} onClick={that.handleGo}>go!</button>
               </div>
             </div>
           </div>
             <div className="row">
-              {/* This code will dump the correct Child Component */}
+              {/* that code will dump the correct Child Component */}
               {kid}
             </div>
         </div>

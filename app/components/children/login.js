@@ -44,7 +44,6 @@ var Login = React.createClass({
     //this.props.setTerm(this.state.username, this.state.password);
     helpers.login(this.state.username, this.state.password)
       .then(function(response){
-        console.log(response);
         if (response) {
           var id = response.data._id;
           localStorage.setItem("_id", response.data._id);

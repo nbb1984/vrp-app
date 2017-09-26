@@ -19,6 +19,7 @@ var IndexRoute = router.IndexRoute;
 var Main = require("../components/Main");
 var Login = require("../components/children/Login");
 var MostPopular = require("../components/children/MostPopular");
+var allUsers = require("../components/children/allusers");
 var Userpage = require("../components/children/Userpage");
 
 
@@ -30,8 +31,8 @@ module.exports= (
         <Router history={hashHistory}>
           <Route path="/" component={Main}>
             {/* If user selects Favorite Places then show the appropriate component*/}
-            <Route path="Userpage" component={Userpage}/>
             <Route path="MostPopular" component={MostPopular}/>
+            <Route path="allUsers" component={allUsers}/>            
             
             <IndexRoute component={Userpage} />
             {/* If user selects any other path... we get the Home Route */}
