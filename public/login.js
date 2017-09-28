@@ -1,9 +1,19 @@
-$(document).ready(function(){
+$(document).ready(function () {
+
+	var button = document.querySelector('a-button');
+	var toast = document.querySelector('a-toast');
+	toast.addEventListener('actionclick', () = > {
+		toast.hide();
+});
+	button.addEventListener('click', () = > {
+		toast.show();
+});
+
 	console.log("hello");
 	$(".username").val("");
 	$(".password").val("");
 
-	if (window.location.search.substring(1) === "error"){
+	if (window.location.search.substring(1) === "error") {
 		console.log('got this far');
 		$('.message').html("<div class='alert alert-danger text-center' role='alert'>There was an error with your username and/or password.  Please re-enter.</div>");
 	}
