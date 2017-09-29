@@ -36,8 +36,7 @@ app.use("/images", serveStatic(path.join(__dirname ,"/images/")));
 app.use("/assets", serveStatic(path.join(__dirname, "/assets/")));
 app.use("/img", serveStatic(path.join(__dirname, "/img/")));
 app.use("/components", serveStatic(path.join(__dirname, "/components/")));
-app.use("/src", serveStatic(path.join(__dirname,"/src/")));
-
+app.use("/public", serveStatic(path.join(__dirname, "/public/")));
 // -------------------------------------------------
 // MongoDB Configuration configuration (Change this URL to your own DB)
 mongoose.connect("mongodb://localhost/vrp-app");
@@ -141,6 +140,8 @@ app.get('/signup', (req, res) => {
 app.get('/gallery', (req, res) => {
 	res.sendFile("gallery.html", options);
 });
+
+
 // // This is the route we will send GET requests to retrieve our most recent search data.
 // // We will call this route the moment our page gets rendered
 

@@ -8,6 +8,7 @@ $(document).ready(function(){
 		console.log("Event", event);
 		alert(queryText.getAttribute("value"));
 		console.log(queryText.getAttribute("value"));
+		getPic();
 	});
 	toast.addEventListener('actionclick', () => {
 		toast.hide();
@@ -18,3 +19,19 @@ $(document).ready(function(){
 
 	}, false);
 });
+
+
+function getPic(){
+	var zoom = 1;
+	var location = [ 51.50700703827454, -0.12791916931155356 ];
+	panoramaByLocation(location, function (err, result) {
+		if (err) throw err;
+		var data = equirect(zoom, result.tiles);
+
+		// tile size
+		console.log(data);
+
+		// canvas size
+		console.log(data.width, data.height)
+	})
+}

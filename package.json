@@ -9,22 +9,24 @@
     "build": "webpack -w"
   },
   "dependencies": {
-    "express": "^4.15.4",
-    "serve-static": "^1.12.6",
     "axios": "^0.16.2",
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.18.0",
     "connect-flash": "^0.1.1",
     "cookie-parser": "^1.4.3",
+    "express": "^4.15.4",
     "express-session": "^1.15.5",
     "express-validator": "^4.1.1",
+    "google-panorama-by-location": "^4.1.1",
+    "google-panorama-tiles": "^1.0.3",
     "mongoose": "^4.11.13",
     "morgan": "^1.8.2",
     "passport": "^0.4.0",
     "passport-local": "^1.0.0",
     "react": "^0.14.3",
     "react-dom": "^0.14.3",
-    "react-router": "^2.4.1"
+    "react-router": "^2.4.1",
+    "serve-static": "^1.12.6"
   },
   "devDependencies": {
     "browserify": "^12.0.1",

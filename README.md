@@ -30,3 +30,9 @@ If you wish to serve the site from a different port:
 ## License
 
 Distributed under an [MIT License](LICENSE).
+
+## Desktop
+
+Useful Chrome Extension:
+
+https://github.com/spite/WebVR-Extension
