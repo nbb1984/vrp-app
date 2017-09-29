@@ -15,15 +15,7 @@ var path = require('path');
 // Create Instance of Express
 var app = express();
 
-var basePath = path.resolve(__dirname, "..");
 
-function pathHelper(path){
-  return path.join(basePath, path);
-}
-
-function pathBack(path){
-
-}
 
 var users = require("./routes/users");
 var routes = require("./routes/index");
@@ -40,11 +32,11 @@ app.use(bodyParser.json({ type: "application/vnd.api+json" }));
 app.use(express.static("public"));
 app.use(cookieParser());
 
-app.use("/images", serveStatic(path.join(basePath,"/images/")));
-app.use("/assets", serveStatic(path.join(basePath, "/assets/")));
-app.use("/img", serveStatic(path.join(basePath, "/img/")));
-app.use("/components", serveStatic(path.join(basePath, "/components/")));
-app.use("/src", serveStatic(path.join(basePath,"/src/")));
+app.use("/images", serveStatic(path.join(__dirname ,"/images/")));
+app.use("/assets", serveStatic(path.join(__dirname, "/assets/")));
+app.use("/img", serveStatic(path.join(__dirname, "/img/")));
+app.use("/components", serveStatic(path.join(__dirname, "/components/")));
+app.use("/src", serveStatic(path.join(__dirname,"/src/")));
 
 // -------------------------------------------------
 // MongoDB Configuration configuration (Change this URL to your own DB)
@@ -122,77 +114,38 @@ app.get("/user", function(req, res) {
 });
 
 
-
-
+var options = {
+	root: path.join( __dirname + "/public/"),
+	dotfiles: 'deny',
+	headers: {
+		'x-timestamp': Date.now(),
+		'x-sent': true
+	}
+};
 
 app.get('/', (req, res) => {
-
-	var options = {
-		root: __dirname,
-		dotfiles: 'deny',
-		headers: {
-			'x-timestamp': Date.now(),
-			'x-sent': true
-		}
-	};
-	res.sendFile("public/login.html", options)
+	res.sendFile("login.html", options)
 });
 
 app.get('/login', (req, res) => {
-
-	var options = {
-		root: __dirname,
-		dotfiles: 'deny',
-		headers: {
-			'x-timestamp': Date.now(),
-			'x-sent': true
-		}
-	};
-	res.sendFile("public/login.html", options)
+	res.sendFile("login.html", options)
 });
 
 app.get('/search', (req, res) => {
-
-	var options = {
-		root: __dirname,
-		dotfiles: 'deny',
-		headers: {
-			'x-timestamp': Date.now(),
-			'x-sent': true
-		}
-	};
-	res.sendFile("/public/search.html", options)
+	res.sendFile("search.html", options)
 });
 
 app.get('/signup', (req, res) => {
-
-	var options = {
-		root: __dirname,
-		dotfiles: 'deny',
-		headers: {
-			'x-timestamp': Date.now(),
-			'x-sent': true
-		}
-	};
-	res.sendFile("public/signup.html", options);
+	res.sendFile("signup.html", options);
 });
 app.get('/gallery', (req, res) => {
-
-	var options = {
-		root: __dirname,
-		dotfiles: 'deny',
-		headers: {
-			'x-timestamp': Date.now(),
-			'x-sent': true
-		}
-	};
-	res.sendFile("public/gallery.html", options);
+	res.sendFile("gallery.html", options);
 });
 // // This is the route we will send GET requests to retrieve our most recent search data.
 // // We will call this route the moment our page gets rendered
 
 
-app.use('/', routes);
+//app.use('/', routes);  // temporary disable for dev
 app.use('/', users);
 
 // -------------------------------------------------

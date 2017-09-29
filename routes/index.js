@@ -2,7 +2,7 @@ var express = require('express');
 var router = express.Router();
 console.log("index js ran");
 // Get Homepage
-router.get('/home', ensureAuthenticated, function(req, res){
+router.get('/', ensureAuthenticated, function(req, res){
 	console.log("dasjlfkasdj;flka");
 	console.log(req.body);
 	res.redirect('/search');
