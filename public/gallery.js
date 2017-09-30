@@ -9,7 +9,9 @@ $(document).ready(function () {
 			attachGalleryOptions = "attach";
 			createPanels(response.data, "initial");
 		});
-	document.querySelector('.showOptions').addEventListener('click', clickedShow);
+	document.querySelector('a-entity#attach').addEventListener('animation__remove-complete', removeCurrentPanelsFromSceneGraph)
+	document.querySelector('.maximizer').addEventListener('click', clickedShow);
+	document.querySelector('.getNewItems').addEventListener('click', clickedRemoveReload);
 	/*	var sky= document.querySelector('a-sky');
 		console.log(sky);
 		sky.setAttribute('opacity', '0');*/
@@ -44,6 +46,7 @@ function createPanels(items, animate) {
 	linkEl.setAttribute('position', {x: 0, y: 0, z: 0});
 	var container = document.querySelector('a-entity#attach');
 	container.appendChild(linkEl);
+
 	for (var i = 0; i < items.length; i++) {
 		var newThumb = document.createElement('a-entity');
 		newThumb.setAttribute('template', "src: #link");
@@ -66,8 +69,17 @@ function createPanels(items, animate) {
 			easing: "easeOutCubic",
 			from: {x: 0, y: -5, z: 0},
 			to: {x: xFin, y: 0, z: zFin},
-			dur: 2000,
+			dur: 1500,
 			startEvents: "loaded",
+			dir: "normal"
+		});
+		newThumb.setAttribute("animation__remove", {
+			property: "position",
+			easing: "easeInCubic",
+			from: {x: xFin, y: 0, z: zFin},
+			to: {x: 0, y: 11, z: 0},
+			dur: 2000,
+			startEvents: "removal",
 			dir: "normal"
 		});
 		newThumb.setAttribute("animation__minimize", {
@@ -122,7 +134,8 @@ function clickedHide() {
 		/*var linkContainer = linkPanels[i].parentNode;
 		linkContainer.removeChild(linkPanels[i]);*/
 	}
-	document.querySelector('.showOptions').setAttribute('visible', 'true');
+	document.querySelector('.maximizer').setAttribute('visible', 'true');
+	//document.querySelector('.getNewItems').setAttribute('visible', 'true');
 }
 
 function clickedShow(event) {
@@ -143,7 +156,41 @@ function clickedShow(event) {
 		linkContainer.removeChild(linkPanels[i]);*/
 	}
 
-	document.querySelector('.showOptions').setAttribute('visible', 'false');
+	document.querySelector('.maximizer').setAttribute('visible', 'false');
+	document.querySelector('.getNewItems').setAttribute('visible', 'true');
+}
+
+function clickedRemoveReload(event) {
+	var links = document.querySelector('a-entity#links');
+	var linkPanels = links.components.layout.children;
+	for (var i = 0; i < linkPanels.length; i++) {
+		linkPanels[i].emit("removal");
+		//linkPanels[i].addState('maximize');
+		//linkPanels[i].removeState('minimize');
+		/*var linkContainer = linkPanels[i].parentNode;
+		linkContainer.removeChild(linkPanels[i]);*/
+	}
+	console.log("REMOVING ANIMATION");
+	document.querySelector('.getNewItems').setAttribute('visible', 'false');
+}
+
+function removeCurrentPanelsFromSceneGraph(){
+	var links = document.querySelector('a-entity#links');
+	var linkPanels = links.components.layout.children;
+	for (var i = 0; i < linkPanels.length; i++) {
+		var linkContainer = linkPanels[i].parentNode;
+		linkContainer.removeChild(linkPanels[i]);
+	}
+	links.parentNode.removeChild(links);
+	console.log("REMOVING PANELS");
+	axios.get("http://localhost:9000/gallery" + "/" + "tileData")
+		.then((response) => {
+			console.log(response);
+			createPanels(response.data, "show");
+		});
+	document.querySelector('.maximizer').setAttribute('visible', 'false');
+	document.querySelector('a-entity#attach').flushToDOM(true);
+
 }
 
 // =====
@@ -156,7 +203,7 @@ function clickedHideOrig() {
 		linkContainer.removeChild(linkPanels[i]);
 	}
 	links.parentNode.removeChild(links);
-	document.querySelector('.showOptions').setAttribute('visible', 'true');
+	document.querySelector('.maximizer').setAttribute('visible', 'true');
 }
 
 function clickedShowOrig(event) {
@@ -166,7 +213,7 @@ function clickedShowOrig(event) {
 			console.log(response);
 			createPanels(response.data, "show");
 		});
-	document.querySelector('.showOptions').setAttribute('visible', 'false');
+	document.querySelector('.maximizer').setAttribute('visible', 'false');
 	document.querySelector('a-entity#attach').flushToDOM(true);
 }
 
