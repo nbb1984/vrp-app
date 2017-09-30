@@ -8,11 +8,7 @@
   <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
   <script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
   <script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
-  <!--<script src="lib/setEvent.js"></script>-->
-<!--  <script src="lib/anime.js"></script>
-  <script src="public/animate-each.js"></script>-->
-<script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
-  <!--   <script src="lib/aframe-layout-component.js"></script>-->
+  <script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
   <script src="https://npmcdn.com/aframe-template-component@3.1.1"></script>
   <script src="https://unpkg.com/aframe-look-at-component@0.5.1/dist/aframe-look-at-component.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
@@ -22,9 +18,6 @@
 <body>
 <a-scene>
 
-  <!-- <a-text  position="-0 0 -2" value="Hello, World!" text.color="white"></a-text>
-  <a-text position="-1 0 -2" value="Now Interactable" geometry="primitive:plane; height: 1; width: 1"></a-text> -->
-
   <a-assets>
     <img id="city" crossorigin="anonymous" src="assets/img/loc1.jpg">
     <img id="city-thumb" crossorigin="anonymous" src="assets/img/thumb-city-1.jpg">
@@ -32,13 +25,11 @@
     <img id="sechelt-thumb" crossorigin="anonymous" src="assets/img/thumb-city-3.jpg">
     <img id="graf-thumb" crossorigin="anonymous" src="assets/img/thumb-city-4.jpg">
     <img id="one-thumb" crossorigin="anonymous" src="assets/img/thumb-city-5.jpg">
-    <!--<audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>-->
     <img id="cubes" crossorigin="anonymous" src="assets/img/loc2.jpg">
     <img id="sechelt" crossorigin="anonymous" src="assets/img/loc3.jpg">
     <img id="graf" crossorigin="anonymous" src="assets/img/loc4.jpg">
     <img id="one" crossorigin="anonymous" src="assets/img/loc5.jpg">
 
-    <!--  animation="property: position; easing: easeInSine; to: 0 0 -10; dur: 2000; dir: reverse" -->
     <!-- Image link template to be reused. -->
     <script id="link" type="text/html">
       <a-entity class="link option"
@@ -59,12 +50,8 @@
 
   <!-- Image links. -->
   <a-entity id="attach">
-   <!--<a-entity id="links"
-              layout="type: circle; radius: 1; margin: 1"
-              position="0 0 0">
 
-    </a-entity>-->
-    <!-- show options   -->
+    <!-- maximize (button)  -->
     <a-entity class="maximizer"
               look-at="[camera]"
               position="0 -.5 -1"
@@ -77,6 +64,7 @@
               event-set__4="_event: mouseleave; scale: 1 1 1"
               sound="on: click; src: #click-sound">
     </a-entity>
+    <!-- net page/remove current panels (button)-->
     <a-entity class="getNewItems"
               look-at="[camera]"
               position="0 -.15 -1"
@@ -90,8 +78,6 @@
               sound="on: click; src: #click-sound">
     </a-entity>
   </a-entity>
-
-
 
 
   <!-- Camera + cursor. -->
