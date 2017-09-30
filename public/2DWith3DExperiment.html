@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Virtual Reality Passport</title>
+	<!-- Here we include bootstrap. This will be made available to all of the generated HTML/JS that React generates-->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+	<script src="https://code.jquery.com/jquery.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+	<script src="lib/es6-promise.auto.js"></script>
+	<script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
+	<script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
+	<script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
+	<script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
+	<script src="https://npmcdn.com/aframe-template-component@3.1.1"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+	<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<!--	<script src="/set-image.js"></script>-->
+</head>
+<body>
+<a-scene>
+
+	<!-- <a-text  position="-0 0 -2" value="Hello, World!" text.color="white"></a-text>
+  <a-text position="-1 0 -2" value="Now Interactable" geometry="primitive:plane; height: 1; width: 1"></a-text> -->
+
+	<a-assets>
+		<img id="city" crossorigin="anonymous" src="assets/img/loc1.jpg">
+		<img id="city-thumb" crossorigin="anonymous" src="assets/img/thumb-city-1.jpg">
+		<img id="cubes-thumb" crossorigin="anonymous" src="assets/img/thumb-city-2.jpg">
+		<img id="sechelt-thumb" crossorigin="anonymous" src="assets/img/thumb-city-3.jpg">
+		<img id="graf-thumb" crossorigin="anonymous" src="assets/img/thumb-city-4.jpg">
+		<img id="one-thumb" crossorigin="anonymous" src="assets/img/thumb-city-5.jpg">
+		<!--<audio id="click-sound" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/audio/click.ogg"></audio>-->
+		<img id="cubes" crossorigin="anonymous" src="assets/img/loc2.jpg">
+		<img id="sechelt" crossorigin="anonymous" src="assets/img/loc3.jpg">
+		<img id="graf" crossorigin="anonymous" src="assets/img/loc4.jpg">
+		<img id="one" crossorigin="anonymous" src="assets/img/loc5.jpg">
+
+		<!-- Image link template to be reused. -->
+		<script id="link" type="text/html">
+			<a-entity class="link"
+								geometry="primitive: plane; height: .15; width: .15"
+								material="shader: flat; src: ${thumb}"
+								event-set__1="_event: mousedown; scale: 1 1 1"
+								event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+								event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+								event-set__4="_event: mouseleave; scale: 1 1 1"
+								set-image="on: click; target: #image-360; src: ${src}"
+								sound="on: click; src: #click-sound"></a-entity>
+		</script>
+	</a-assets>
+
+	<!-- 360-degree image. -->
+	<a-sky id="image-360" radius="10" src="#city"></a-sky>
+
+	<!-- Image links. -->
+	<a-entity id="attach">
+		<a-entity id="links" layout="type: line; margin: .18" position="-.3 0 -1.">
+
+		</a-entity>
+	</a-entity>
+
+
+	<!-- Camera + cursor. -->
+	<a-entity camera look-controls>
+		<a-cursor id="cursor"
+							animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+							animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+							event-set__1="_event: mouseenter; color: springgreen"
+							event-set__2="_event: mouseleave; color: black"
+							fuse="true"
+							raycaster="objects: .link"></a-cursor>
+	</a-entity>
+</a-scene>
+<script src="gallery.js"></script>
+	<!-- This is where React will deploy the contents it generates -->
+<div style=" position: absolute; top: 0;">
+	<div class="container">
+		<div class="row">
+			<div class="col-sm-6 col-md-4 col-md-offset-4">
+				<h1 class="text-center login-title">Sign in to continue to Virtual Reality Passport</h1>
+				<div class="account-wall">
+					<div class = "message"></div>
+					<form method="POST" action="/loginUser" class="button-size">
+						<input type="text" class="form-control username" name="username" placeholder="Username" required autofocus>
+						<input type="password" name="password" class="form-control password" placeholder="Password" required>
+						<button class="btn btn-lg btn-primary btn-block submit-button" name ="button" type= "submit">
+							Sign in</button>
+					</form>
+				</div>
+				<a href="registration.html" class="text-center new-account">Create an account </a>
+				<br>
+				<br>
+				<br>
+				<img src ="images/BlackCircle.png" height=100% width=100%>
+			</div>
+		</div>
+	</div>
+</div>
+
+	<!-- All of our JS code will be transpiled into this bundle.js file -->
+
+</body>
+</html>

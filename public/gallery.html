@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>360&deg; Image Gallery</title>
+  <meta name="description" content="360&deg; Image Gallery - A-Frame">
+  <script src="lib/es6-promise.auto.js"></script>
+  <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
+  <script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
+  <script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
+  <script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
+  <script src="https://npmcdn.com/aframe-template-component@3.1.1"></script>
+  <script src="https://unpkg.com/aframe-look-at-component@0.5.1/dist/aframe-look-at-component.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script src="/set-image.js"></script>
+</head>
+<body>
+<a-scene>
+
+  <a-assets>
+    <img id="city" crossorigin="anonymous" src="assets/img/loc1.jpg">
+    <img id="city-thumb" crossorigin="anonymous" src="assets/img/thumb-city-1.jpg">
+    <img id="cubes-thumb" crossorigin="anonymous" src="assets/img/thumb-city-2.jpg">
+    <img id="sechelt-thumb" crossorigin="anonymous" src="assets/img/thumb-city-3.jpg">
+    <img id="graf-thumb" crossorigin="anonymous" src="assets/img/thumb-city-4.jpg">
+    <img id="one-thumb" crossorigin="anonymous" src="assets/img/thumb-city-5.jpg">
+    <img id="cubes" crossorigin="anonymous" src="assets/img/loc2.jpg">
+    <img id="sechelt" crossorigin="anonymous" src="assets/img/loc3.jpg">
+    <img id="graf" crossorigin="anonymous" src="assets/img/loc4.jpg">
+    <img id="one" crossorigin="anonymous" src="assets/img/loc5.jpg">
+
+    <!-- Image link template to be reused. -->
+    <script id="link" type="text/html">
+      <a-entity class="link option"
+                look-at="[camera]"
+                geometry="primitive: plane; height: .15; width: .15"
+                material="shader: flat; src: ${thumb}"
+                event-set__1="_event: mousedown; scale: 1 1 1"
+                event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+                event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+                event-set__4="_event: mouseleave; scale: 1 1 1"
+                set-image="on: click; target: #image-360; src: ${src}"
+                sound="on: click; src: #click-sound"></a-entity>
+    </script>
+  </a-assets>
+
+  <!-- 360-degree image. -->
+  <a-sky id="image-360" radius="10" src="#city"></a-sky>
+
+  <!-- Image links. -->
+  <a-entity id="attach">
+
+    <!-- maximize (button)  -->
+    <a-entity class="maximizer"
+              look-at="[camera]"
+              position="0 -.5 -1"
+              visible="false"
+              geometry="primitive: plane; height: .15; width: .15"
+              material="shader: flat; color: blue"
+              event-set__1="_event: mousedown; scale: 1 1 1"
+              event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+              event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+              event-set__4="_event: mouseleave; scale: 1 1 1"
+              sound="on: click; src: #click-sound">
+    </a-entity>
+    <!-- net page/remove current panels (button)-->
+    <a-entity class="getNewItems"
+              look-at="[camera]"
+              position="0 -.15 -1"
+              visible="false"
+              geometry="primitive: plane; height: .15; width: .15"
+              material="shader: flat; color: red"
+              event-set__1="_event: mousedown; scale: 1 1 1"
+              event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+              event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+              event-set__4="_event: mouseleave; scale: 1 1 1"
+              sound="on: click; src: #click-sound">
+    </a-entity>
+  </a-entity>
+
+
+  <!-- Camera + cursor. -->
+  <a-entity camera look-controls>
+    <a-cursor id="cursor"
+              animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150"
+              animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
+              event-set__1="_event: mouseenter; color: springgreen"
+              event-set__2="_event: mouseleave; color: black"
+              fuse="true"
+              raycaster="objects: .maximizer"
+              raycaster="objects: .getNewItems"
+              raycaster="objects: .link"></a-cursor>
+  </a-entity>
+</a-scene>
+<script src="gallery.js"></script>
+</body>
+</html>
