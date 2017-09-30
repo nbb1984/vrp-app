@@ -4,12 +4,19 @@
   <meta charset="utf-8">
   <title>360&deg; Image Gallery</title>
   <meta name="description" content="360&deg; Image Gallery - A-Frame">
+  <script src="lib/es6-promise.auto.js"></script>
   <script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
   <script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
   <script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
-  <script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
+  <!--<script src="lib/setEvent.js"></script>-->
+<!--  <script src="lib/anime.js"></script>
+  <script src="public/animate-each.js"></script>-->
+<script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
+  <!--   <script src="lib/aframe-layout-component.js"></script>-->
   <script src="https://npmcdn.com/aframe-template-component@3.1.1"></script>
+  <script src="https://unpkg.com/aframe-look-at-component@0.5.1/dist/aframe-look-at-component.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/set-image.js"></script>
 </head>
 <body>
@@ -31,9 +38,11 @@
     <img id="graf" crossorigin="anonymous" src="assets/img/loc4.jpg">
     <img id="one" crossorigin="anonymous" src="assets/img/loc5.jpg">
 
+    <!--  animation="property: position; easing: easeInSine; to: 0 0 -10; dur: 2000; dir: reverse" -->
     <!-- Image link template to be reused. -->
     <script id="link" type="text/html">
-      <a-entity class="link"
+      <a-entity class="link option"
+                look-at="[camera]"
                 geometry="primitive: plane; height: .15; width: .15"
                 material="shader: flat; src: ${thumb}"
                 event-set__1="_event: mousedown; scale: 1 1 1"
@@ -50,30 +59,27 @@
 
   <!-- Image links. -->
   <a-entity id="attach">
-    <a-entity id="links" layout="type: line; margin: .18" position="-.3 0 -1.">
-      <!-- <a-entity template="src: #link" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#graf" data-thumb="#graf-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#one" data-thumb="#one-thumb"></a-entity>
-     </a-entity>
+   <!--<a-entity id="links"
+              layout="type: circle; radius: 1; margin: 1"
+              position="0 0 0">
 
-     <a-entity id="links" layout="type: line; margin: .18" position="-.3 -.2 -1.">
-       <a-entity template="src: #link" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#graf" data-thumb="#graf-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#one" data-thumb="#one-thumb"></a-entity>
-     </a-entity>
-
-     <a-entity id="links" layout="type: line; margin: .18" position="-.3 .18 -1.">
-       <a-entity template="src: #link" data-src="#cubes" data-thumb="#cubes-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#city" data-thumb="#city-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#sechelt" data-thumb="#sechelt-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#graf" data-thumb="#graf-thumb"></a-entity>
-       <a-entity template="src: #link" data-src="#one" data-thumb="#one-thumb"></a-entity>-->
+    </a-entity>-->
+    <!-- show options   -->
+    <a-entity class="showOptions"
+              look-at="[camera]"
+              position="0 -.5 -1"
+              visible="false"
+              geometry="primitive: plane; height: .3; width: .3"
+              material="shader: flat; color: blue"
+              event-set__1="_event: mousedown; scale: 1 1 1"
+              event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+              event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+              event-set__4="_event: mouseleave; scale: 1 1 1"
+              sound="on: click; src: #click-sound">
     </a-entity>
   </a-entity>
+
+
 
 
   <!-- Camera + cursor. -->
@@ -84,6 +90,7 @@
               event-set__1="_event: mouseenter; color: springgreen"
               event-set__2="_event: mouseleave; color: black"
               fuse="true"
+              raycaster="objects: .showOptions"
               raycaster="objects: .link"></a-cursor>
   </a-entity>
 </a-scene>

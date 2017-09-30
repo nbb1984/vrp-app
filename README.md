@@ -1,3 +1,8 @@
+# TEAM NOTES 
+
+
+
+=========== The Actual README ============================
 # VRP 
 
 ### Installation
@@ -36,3 +41,6 @@ Distributed under an [MIT License](LICENSE).
 Useful Chrome Extension:
 
 https://github.com/spite/WebVR-Extension
+
+Project Shout Outs:
+https://github.com/konforti/GSVPano

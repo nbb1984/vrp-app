@@ -6,6 +6,8 @@ var app = express();
 var User = require('../models/user');
 var Search = require('../models/searches');
 
+var mockData = require('../assets/dataMock');
+
 // Register User
 router.post('/registerUser', function(req, res){
 	console.log("register user backend");
@@ -103,7 +105,9 @@ passport.deserializeUser(function(id, done) {
 });
 
 router.get("/userData", function(req, res) {
-  console.log("got this");
+	// temporary commented out
+	res.json(mockData.userData);
+/*  console.log("got this");
   console.log(req.user);
   console.log("got this");
   var id = req.user._id;
@@ -129,7 +133,7 @@ router.get("/userData", function(req, res) {
       else {
         res.json(doc);
       }
-    });
+    });*/
   });
 
 // Code for getting the popular search data.  
@@ -168,7 +172,7 @@ router.post("/user/search", function(req, res) {
     else {
       // Create a new Search and pass the req.body to the entry
       var newSearch = new Search(req.body);
-      console.log("Req.body:")
+      console.log("Req.body:");
       console.log(req.body);
       // And save the new Search the db
       newSearch.save(function(error, doc) {
