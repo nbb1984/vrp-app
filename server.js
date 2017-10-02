@@ -39,6 +39,7 @@ app.use("/img", serveStatic(path.join(__dirname, "/img/")));
 app.use("/components", serveStatic(path.join(__dirname, "/components/")));
 app.use("/lib", serveStatic(path.join(__dirname, "/lib/")));
 app.use("/public", serveStatic(path.join(__dirname, "/public/")));
+
 // -------------------------------------------------
 // MongoDB Configuration configuration (Change this URL to your own DB)
 mongoose.connect("mongodb://localhost/vrp-app");
