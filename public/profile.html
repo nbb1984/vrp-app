@@ -16,11 +16,13 @@
   <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
   <script src="https://unpkg.com/aframe-layout-component@4.2.0/dist/aframe-layout-component.min.js"></script>
   <script src="https://unpkg.com/aframe-template-component@^3.2.1/dist/aframe-template-component.min.js"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script src="/public/js/set-image.js"></script>
 
   <script src="/public/js/nav-row.js"></script>
   <script src="/public/js/manhole.js"></script>
   <script src="/public/js/linking.js"></script>
+  <script src="/public/js/user-profile-base.js"></script>
 
 </head>
 <body>
@@ -39,7 +41,6 @@
                 animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
                 event-set__1="_event: mouseenter; color: #549ad5"
                 event-set__2="_event: mouseleave; color: #ededed"
-                raycaster="far: 20; objects: .icon"
                 raycaster="far: 20; objects: .clickable"></a-cursor>
     </a-entity>
   </a-entity>
@@ -74,7 +75,7 @@
 
   <a-entity manhole></a-entity>
   <a-entity nav-row="page: profile;"></a-entity>
-
+<!--  <a-entity user-profile-base></a-entity>-->
 <!--  <a-entity id="BlackBottomCircle">
     <a-image src="assets/ui/BlackCircle.png" scale="30 30 30" position="0 -28 0" rotation="-90 0 0"
              visible="true"></a-image>
@@ -91,7 +92,7 @@
   </a-entity>-->
 
   <!-- Image links. -->
-  <a-entity id="links" layout="type: line; margin: .3" position="-.6 0 -1.">
+  <a-entity id="links" layout="type: line; margin: .3" scale="3 3 3" position="-1.5 0 -3.">
 
 
     <a-entity id="links" layout="type: line; margin: .3" position="-.6 .18 -1.">

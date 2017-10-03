@@ -2,8 +2,7 @@
 var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
-var mongoose = require("mongoose");
-var mongo = require("mongodb");
+
 var cookieParser = require("cookie-parser");
 var expressValidator = require("express-validator");
 var serveStatic = require('serve-static');
@@ -42,16 +41,7 @@ app.use("/public/", serveStatic(path.join(__dirname, "/public/")));
 app.use("/public/js/", serveStatic(path.join(__dirname, "/public/js/")));
 
 // -------------------------------------------------
-// MongoDB Configuration configuration (Change this URL to your own DB)
-mongoose.connect("mongodb://localhost/vrp-app");
-var db = mongoose.connection;
-db.on("error", function (err) {
-	console.log("Mongoose Error: ", err);
-});
-db.once("open", function () {
-	console.log("Mongoose connection successful.");
-});
-
+let db = require('./database');
 // Express Session
 app.use(session({
 	secret: 'secret',
@@ -90,6 +80,7 @@ app.use(function (req, res, next) {
 	res.locals.error_msg = req.flash('error_msg');
 	res.locals.error = req.flash('error');
 	res.locals.user = req.user || null;
+	console.log("something labeled as global response object");
 	next();
 });
 
@@ -101,7 +92,7 @@ console.log("server js ran");
 // // We will call this route the moment our page gets rendered
 
 
-//app.use('/', routes);  // temporary disable for dev
+app.use('/', routes);  // temporary disable for dev
 app.use('/', users);
 app.use('/', content);
 

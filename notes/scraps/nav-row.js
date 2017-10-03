@@ -74,14 +74,9 @@ AFRAME.registerComponent('nav-row', {
 			}
 
 			if(btns[i].page === "help"){
-				newEl.addEventListener("click", (event) => {
-					var displayedHelpMenu = document.getElementById('helpMenuContainer');
-					if(displayedHelpMenu){
-						displayedHelpMenu.parentNode.removeChild(displayedHelpMenu);
-					} else {
-						this.buildHelpMenu();
-					}
-
+				newEl.setAttribute('id', 'helpMenu');
+				newEl.addEventListener("click", function (event) {
+					this.buildHelpMenu();
 					console.log("on click", event.detail.target.getAttribute('data-page'));
 					var indexSelected = event.detail.target.getAttribute('data-page');
 
@@ -94,41 +89,9 @@ AFRAME.registerComponent('nav-row', {
 	},
 
 	buildHelpMenu: function(){
-		var scene = document.querySelector('a-scene');
-		var container = document.createElement('a-entity');
-
-		//var helpMenu = document.createElement('a-help-menu');
-		container.setAttribute('id', 'helpMenuContainer');
-		//helpMenu.setAttribute('help-menu');
-
-		var basePath = "assets/ui/";
-
-		var elems = [
-			{element: "a-image", file: "HelpMenu.png", height: 6, width: 10, position: {x: -1.6, y: -1, z: -2}, rotation: {x: -10, y: 0, z:0}, scale: {x: 0.5, y: 0.5, z: 0.5}},
-			{element: "a-image", file:"login_signup_Btn.png", class:"clickable", position: {x: 1.6, y: -2, z: -1.8}}, // will be logout
-			/*			{page: "search", file:"search.png", class:"clickable",position: {x: -0.8, y: -2, z: -3.8}},
-						{page: "profile", file:"Profile.png", class:"clickable",position: {x: 0, y: -2, z: -3.8}},
-						{page: "profile-expanded",  file:"myPassport.png", class:"clickable",position: {x: .8, y: -2, z: -3.80}},
-						{element: "a-image", id: "info", class: "clickable", placeholder: "Username", color: "black", width: 1, position: {x: -1.2, y: -0.75, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
-						{element: "a-input", id: "password", class: "clickable", placeholder: "Password", type: "password", width: 1, position: {x: -1.2, y: -1.07, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
-						{element: "a-text", id: "", value: "Login",  position: {x: -1.176, y: -0.45, z: -2.944}, text: {height: 3}},
-						{element: "a-button", id: "submit", class: "clickable", value: "Login", name: "stuff", color: "white", position: {x: 0.337, y: -1.075, z: -2.944}, scale: {x: 0.8, y: 0.8, z: 0.8}},
-						{element: "a-text", id: "", value: " or Sign up, now.",  position: {x: -0.53, y: -0.49, z: -2.944}, text: {height: 1}, scale: {x: 0.5, y: 0.5, z: 0.5}},*/
-		];
-
-		for(var i=0; i<elems.length; i++){
-			var newEl = document.createElement(elems[i].element);
-			for(var prop in elems[i]){
-				if(prop !== "element" && prop !== "file"){
-					newEl.setAttribute(prop, elems[i][prop])
-				}
-				if(prop === "file"){
-					newEl.setAttribute('src', basePath + elems[i].file);
-				}
-			}
-			container.appendChild(newEl);
-		}
-
-		scene.appendChild(container);
+		var help = document.getElementById('help-menu');
+		var helpMenu = document.createElement('a-entity');
+		helpMenu.setAttribute('help-menu');
+		help.appendChild(helpMenu);
 	}
 });

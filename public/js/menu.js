@@ -4,7 +4,7 @@
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
  */
-AFRAME.registerComponent('login-fields', {
+AFRAME.registerComponent('help-menu', {
 	schema: {
 		/*on: {type: 'string'},
 		imgDir: {type: 'string'}*/
@@ -23,12 +23,19 @@ AFRAME.registerComponent('login-fields', {
 	buildAndAttach: function () {
 		var data = this.data;
 		var el = this.el;
+		var basePath = "assets/ui/";
+
 		var elems = [
-			{element: "a-input", id: "username", class: "clickable", placeholder: "Username", color: "black", width: 1, position: {x: -1.2, y: -0.75, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
+			{element: "a-image", file: "HelpMenu.png", class:"clickable", position: {x: -1.6, y: -2, z: -1.8}},
+			{element: "a-image", file:"login_signup_Btn.png", class:"clickable", position: {x: 1.6, y: -2, z: -1.8}},
+/*			{page: "search", file:"search.png", class:"clickable",position: {x: -0.8, y: -2, z: -3.8}},
+			{page: "profile", file:"Profile.png", class:"clickable",position: {x: 0, y: -2, z: -3.8}},
+			{page: "profile-expanded",  file:"myPassport.png", class:"clickable",position: {x: .8, y: -2, z: -3.80}},
+			{element: "a-image", id: "info", class: "clickable", placeholder: "Username", color: "black", width: 1, position: {x: -1.2, y: -0.75, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
 			{element: "a-input", id: "password", class: "clickable", placeholder: "Password", type: "password", width: 1, position: {x: -1.2, y: -1.07, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
 			{element: "a-text", id: "", value: "Login",  position: {x: -1.176, y: -0.45, z: -2.944}, text: {height: 3}},
 			{element: "a-button", id: "submit", class: "clickable", value: "Login", name: "stuff", color: "white", position: {x: 0.337, y: -1.075, z: -2.944}, scale: {x: 0.8, y: 0.8, z: 0.8}},
-			{element: "a-text", id: "", value: " or Sign up, now.",  position: {x: -0.53, y: -0.49, z: -2.944}, text: {height: 1}, scale: {x: 0.5, y: 0.5, z: 0.5}},
+			{element: "a-text", id: "", value: " or Sign up, now.",  position: {x: -0.53, y: -0.49, z: -2.944}, text: {height: 1}, scale: {x: 0.5, y: 0.5, z: 0.5}},*/
 		];
 
 		for(var i=0; i<elems.length; i++){
@@ -38,22 +45,22 @@ AFRAME.registerComponent('login-fields', {
 					newEl.setAttribute(prop, elems[i][prop])
 				}
 			}
-			if(elems[i].id === "submit"){
+			/*if(elems[i].id === "submit"){
 				newEl.addEventListener('click', (event) =>{
 					console.log('submit click');
 					var userDetails = {};
-					/*var username = document.querySelector('a-input#username');
+					/!*var username = document.querySelector('a-input#username');
 					var password = document.querySelector('a-input#password');
 					userDetails.username = username.value;
-					userDetails.password = password.value;*/
+					userDetails.password = password.value;*!/
 					userDetails.username = "testuser";
 					userDetails.password = "Apassword1";
-				/*	userDetails.username = "tesfsdfstuser";
-					userDetails.password = "Apassdfsdfsdfsword1";*/
+					/!*	userDetails.username = "tesfsdfstuser";
+						userDetails.password = "Apassdfsdfsdfsword1";*!/
 					this.userLogin(userDetails);
 				})
-			}
-		//	{ username: username, password: password }
+			}*/
+			//	{ username: username, password: password }
 
 			el.appendChild(newEl);
 		}

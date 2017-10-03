@@ -21,13 +21,13 @@ router.post('/registerUser', function(req, res){
   User.getUserByUsername(username, function(err, user){
     if(err) throw err;
     if(user){ 
-      return res.json([{param: 'username', msg: 'Username already exists'}]);
+      return res.json({ok: false,  errors: [{param: 'username', msg: 'Username already exists'}]});
     } else {
 
     	// Validation
       req.checkBody('username', 'Username is required').notEmpty();
-    	req.checkBody('email', 'Email is required').notEmpty();
-    	req.checkBody('email', 'Email is not valid').isEmail();
+    	//req.checkBody('email', 'Email is required').notEmpty();
+    	//req.checkBody('email', 'Email is not valid').isEmail();
     	req.checkBody('password', 'Password is required').notEmpty();
       req.checkBody('password', 'Password must be at least six characters and must contain at least one number, one capital letter, and one lower case letter.  Cannot contain a special character.').isLength({ min: 6 }).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
     	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
@@ -36,7 +36,8 @@ router.post('/registerUser', function(req, res){
 
     	if(errors){
         console.log(errors);
-        res.json(errors);
+
+        res.json({ok: false, errors});
 
 
     	} else {
@@ -54,7 +55,7 @@ router.post('/registerUser', function(req, res){
 
         req.flash('success_msg', 'You are registered and can now login');
         res.status(200);
-        res.redirect('/login?success');
+        res.redirect('/register-success'); // sends the file to the frontend, but does not trigger window.location to change
 
       }
 	 }
@@ -105,9 +106,10 @@ passport.deserializeUser(function(id, done) {
 });
 
 router.get("/userData", function(req, res) {
-	// temporary commented out
-	res.json(mockData.userData);
-/*  console.log("got this");
+
+	//res.json(mockData.userData);
+	// below temporary commented out for easier dev usage
+  console.log("got this");
   console.log(req.user);
   console.log("got this");
   var id = req.user._id;
@@ -133,7 +135,7 @@ router.get("/userData", function(req, res) {
       else {
         res.json(doc);
       }
-    });*/
+    });
   });
 
 // Code for getting the popular search data.  
@@ -246,9 +248,11 @@ router.get("/search/delete/:id/:userId", function(req, res) {
 
 
 router.post('/loginUser',
-  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/login?error', failureFlash: true}),
+  passport.authenticate('local', {successRedirect:'/login-success', failureRedirect:'/login-failure', failureFlash: true}),
   function(req, res) {
-	    res.redirect("/");
+	console.log('login user callback');
+
+	    res.redirect("/login?failure");
   });
 
 router.get('/logout', function(req, res){
@@ -256,7 +260,8 @@ router.get('/logout', function(req, res){
   console.log("You are logged out!!!!!!!!!!");
 	req.flash('success_msg', 'You are logged out');
 
-	res.redirect('/login');
+	res.json({ok: true})
+	//res.redirect('/login');
 });
 
 module.exports = router;

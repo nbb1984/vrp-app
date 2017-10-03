@@ -11,15 +11,14 @@ var mockData = require('../assets/dataMock');
 
 
 function ensureAuthenticated(req, res, next) {
-	next();
-	/*if(req.isAuthenticated()){
+	if(req.isAuthenticated()){
 		console.log("authenticated");
 		return next();
 	} else {
 		req.flash('error_msg','You are not logged in');
 		console.log("login coming!!!!!!!!!!!!!!!!!!!");
 		res.redirect("/login");
-	}*/
+	}
 }
 
 // Get Homepage
@@ -42,10 +41,21 @@ router.get('/', (req, res) => {
 	res.sendFile("login.html", options)
 });
 
+router.get('/index', (req, res) => {
+	res.sendFile("index.html", options);
+});
+
+
+// Authentication Related Routes
 router.get('/login', (req, res) => {
 	res.sendFile("login.html", options)
 });
 
+router.get('/signup', (req, res) => {
+	res.sendFile("signup.html", options);
+});
+
+// Search / Content Related Routes
 router.get('/search', (req, res) => {
 	res.sendFile("search.html", options)
 });
@@ -61,24 +71,23 @@ router.get('/explore', (req, res) => {
 router.get('/explore/categories', (req, res) => {
 	res.sendFile("explore_category.html", options)
 });
-router.get('/index', (req, res) => {
-	res.sendFile("index.html", options);
-});
 
-router.get('/profile', (req, res) => {
-	res.sendFile("profile.html", options)
-});
-
-router.get('/profile-expanded', (req, res) => {
-	res.sendFile("profile_with_images.html", options)
-});
-
-router.get('/signup', (req, res) => {
-	res.sendFile("signup.html", options);
-});
 router.get('/discover', (req, res) => {
 	res.sendFile("discovery_search.html", options);
 });
+
+// User Related Routes
+router.get('/profile', ensureAuthenticated, (req, res) => {
+	res.sendFile("profile.html", options)
+});
+
+router.get('/profile-expanded', ensureAuthenticated, (req, res) => {
+	res.sendFile("profile_with_images.html", options)
+});
+
+
+// Data Related Routes
+
 
 router.get('/dims/:page', (req, res) => {
 	res.json(require('../assets/dimensions/' + req.params.page))
@@ -112,4 +121,56 @@ router.get('/thumbnails/*', (req, res) => {
 
 });
 
+
+router.post('/fileUpload', (req, res) => {
+
+	console.log(req.body);
+	res.end();
+})
+
 module.exports = router;
+
+
+function uploadToMongo(){
+	var mongoose = require("mongoose");
+	var http = require("http");
+
+	mongoose.connect("mongodb://localhost/vrp-app");
+
+	var conn = mongoose.connection;
+
+// Code for uploading pictures
+// ================================================================
+	var path = require("path");
+// Require GridFS
+	var Grid = require("gridfs-stream");
+// Require filesystem module
+	var fs = require("fs");
+	var picturePath = "http://maps.googleapis.com/maps/api/streetview?size=600x300&location=24.5550593,-81.7799871%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw";
+// =================================================================
+
+	Grid.mongo = mongoose.mongo;
+
+	conn.on("error", function(err) {
+		console.log("Mongoose Error: ", err);
+	});
+
+	conn.once("open", function() {
+		// Here we insert the code for gridfs
+		var gfs = Grid(conn.db);
+
+		var writestream = gfs.createWriteStream({
+			filename: "map.png"
+		});
+
+		var request = http.get("http://maps.googleapis.com/maps/api/streetview?size=600x300&location=24.5550593,-81.7799871%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw", function(response) {
+			response.pipe(writestream);
+		});
+
+		writestream.on('close', function(file) {
+			console.log(file.filename + "Written to DB");
+		});
+
+		console.log("Mongoose connection successful.");
+	});
+}

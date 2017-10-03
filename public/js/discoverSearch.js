@@ -8,7 +8,7 @@ AFRAME.registerComponent('discover-search', {
 	schema: {
 		/*on: {type: 'string'},
 		imgDir: {type: 'string'}*/
-	/*	page: {type: 'string'}*/
+		/*	page: {type: 'string'}*/
 	},
 
 	init: function () {
@@ -16,18 +16,36 @@ AFRAME.registerComponent('discover-search', {
 		var el = this.el;
 
 		this.buildAndAttach();
-		// el.addEventListener(data.on, function () {
 
-	/*	el.addEventListener("click", function () {
-			console.log("on click")
-			// Fade out image.
-			/!*			data.target.emit('set-image-fade');
-						// Wait for fade to complete.
-						setTimeout(function () {
-							// Set image.
-							data.target.setAttribute('material', 'src', data.src);
-						}, data.dur);*!/
-		});*/
+		el.setAttribute("animation__keyopen", {
+			property: "position",
+			easing: "easeOutCubic",
+			from: {x: 0, y: 0, z: 0},
+			to: {x: 0, y: 1.25, z: 0},
+			dur: 1500,
+			startEvents: "keyboardIsOpenMove",
+			dir: "normal"
+		});
+
+		el.setAttribute("animation__keyclose", {
+			property: "position",
+			easing: "easeOutCubic",
+			from: {x: 0, y: 1.25, z: 0},
+			to: {x: 0, y: 0, z: 0},
+			dur: 1500,
+			startEvents: "keyboardIsClosedMove",
+			dir: "normal"
+		});
+		var scene = document.querySelector('a-scene');
+		scene.addEventListener('keyboardIsOpen', function(){
+			el.emit("keyboardIsOpenMove");
+			//console.log(el.components)
+		});
+		scene.addEventListener('keyboardIsClosed', function(){
+			el.emit("keyboardIsClosedMove");
+			//console.log(el.components)
+		})
+
 	},
 
 	/**
@@ -37,17 +55,47 @@ AFRAME.registerComponent('discover-search', {
 		var data = this.data;
 		var el = this.el;
 		var elems = [
-			{element: "a-input", class:"clickable", placeholder: "Discover a loaction now.", width: 1, position: {x: -1.2, y: -1.07, z: -2.944}, scale: {x: 1.5, y: 1.5, z: 1.5}},
-			{element: "a-text", value: "Discover",  position: {x: -1.176, y: -0.801, z: -2.944}, text: {height: 3}},
-			{element: "a-button",class:"clickable", value: "search", name: "stuff", color: "white", position: {x: 0.337, y: -1.075, z: -2.944}, scale: {x: 0.8, y: 0.8, z: 0.8}},
+			{
+				item: "input",
+				element: "a-input",
+				class: "clickable",
+				placeholder: "Discover a location now.",
+				width: 1,
+				position: {x: -1.2, y: -1.07, z: -2.944},
+				scale: {x: 1.5, y: 1.5, z: 1.5}
+			},
+			{
+				item: "text",
+				element: "a-text",
+				value: "Discover",
+				position: {x: -1.176, y: -0.801, z: -2.944},
+				text: {height: 3}
+			},
+			{
+				item: "button",
+				element: "a-button",
+				class: "clickable",
+				value: "search",
+				name: "stuff",
+				color: "white",
+				position: {x: 0.337, y: -1.075, z: -2.944},
+				scale: {x: 0.8, y: 0.8, z: 0.8}
+			},
 		];
 
-		for(var i=0; i<elems.length; i++){
+		for (var i = 0; i < elems.length; i++) {
 			var newEl = document.createElement(elems[i].element);
-			for(var prop in elems[i]){
-				if(prop !== "element" ){
+			for (var prop in elems[i]) {
+				if (prop !== "element" && prop !== "item") {
 					newEl.setAttribute(prop, elems[i][prop])
 				}
+			}
+
+			if (elems[i].item === "button") {
+				newEl.addEventListener('click', (event) => {
+					var input = document.querySelector('a-input');
+					console.log(input.value);
+				})
 			}
 
 
@@ -55,7 +103,50 @@ AFRAME.registerComponent('discover-search', {
 		}
 	},
 
-	selectedHighlight: function(){
+
+	runQuery: function (location) {
+		console.log(location);
+		if(axios){
+			// Figure out the geolocation
+			var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&pretty=1&key=" + geocodeAPI;
+			return axios.get(queryURL).then(function (response) {
+				// If get get a result, return that result's formatted address property
+				if (response.data.results[0]) {
+					console.log(response.data.results[0].geometry);
+					console.log(response.data.results[0].geometry.lat);
+					console.log(response.data.results[0].geometry.lng);
+					getPic(response.data.results[0].geometry.lat, response.data.results[0].geometry.lng);
+					//return response.data.results[0];
+				}
+				// If we don't get any results, return an empty string
+				$("a-text#noresults")
+				//return "";
+			});
+		}
+	},
+
+	getPic: function (queryLat, queryLng) {
+
+		var zoom = 1;
+		var lat = queryLat || 32.472170;
+		var lng = queryLng || 34.996909;
+		var loader = new GSVPANO.PanoLoader({zoom: zoom});
+
+		loader.onPanoramaLoad = function () {
+			// did not think of creating a canvas element to hold the image but never attaching it to the DOM
+			var newImage = this.canvas.toDataURL();
+			$('a-sky').attr('src', newImage);
+			console.log("LOADED:", this.canvas)
+		};
+
+		// Invoke the load method with a LatLng point.
+		loader.load(new google.maps.LatLng(lat, lng));
+
+		// Set error handle.
+		loader.onError = function (message) {
+			alert(message);
+		}
 
 	}
+
 });

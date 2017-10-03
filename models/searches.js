@@ -4,17 +4,17 @@ var mongoose = require("mongoose");
 var Schema = mongoose.Schema;
 // Create the Note schema
 var SearchSchema = new Schema({
-  // Just a string
-  query: {
-    type: String
-  },
-  hits: {
-  	type: Number
-  },
-  date: { 
-  	type: Date, 
-  	default: Date.now 
-  }
+	// Just a string
+	query: {
+		type: String
+	},
+	hits: {
+		type: Number
+	},
+	date: {
+		type: Date,
+		default: Date.now
+	}
 });
 // Remember, Mongoose will automatically save the ObjectIds of the searches
 // These ids are referred to in the Article model

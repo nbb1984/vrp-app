@@ -7,9 +7,23 @@
     <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
     <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
 
+<!--
     <script src="https://cdn.rawgit.com/etiennepinchon/aframe-material/master/dist/aframe-material.min.js"></script>
+-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"
+            integrity="sha256-IyWBFJYclFY8Pn32bwWdSHmV4B9M5mby5bhPHEmeY8w=" crossorigin="anonymous"></script>
+    <script src="/lib/aframe-material.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+
+
+
+    <script src="/public/js/nav-row.js"></script>
+    <script src="/public/js/manhole.js"></script>
+    <script src="/public/js/linking.js"></script>
+    <script src="/public/js/signupFields.js"></script>
+
     <script type="text/javascript">
       AFRAME.ASSETS_PATH = "./assets";
     </script>
@@ -25,63 +39,23 @@
           animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
           event-set__1="_event: mouseenter; color: #549ad5"
           event-set__2="_event: mouseleave; color: #ededed"
-          raycaster="far: 20; interval: 1000; objects: .clickable">
+          raycaster="far: 20;  objects: .clickable">
           </a-cursor> 
 
       </a-entity>
 
       <!-- BEGIN INPUTS/KEYBOARD -->
-      <a-keyboard  position="-1.724 -2.751 -2.52" scale="2.5 2.5 2.5" rotation="-40 0 0"></a-keyboard>
+      <a-keyboard class="clickable" physical-keyboard="true" position="-1.724 -2.751 -2.52" scale="2.5 2.5 2.5" rotation="-40 0 0"></a-keyboard>
 
       <!-- search -->
-      <a-text position="-1.176 -.45 -2.944" value="Sign Up" text.height="3"></a-text>
-      <a-input position="-1.2 -.75 -2.944" placeholder="Username" color="black" width=".6" scale="1.5 1.5 1.5"></a-input>
-      <a-input position="-1.2 -1.07 -2.944" type="password" placeholder="Password" color="black" width=".6" scale="1.5 1.5 1.5"></a-input>
-     
-       <a-input position="-.23 -.75 -2.944" placeholder="Username" color="black" width=".6" scale="1.5 1.5 1.5"></a-input>
-      <a-input position="-.230 -1.07 -2.944" type="password" placeholder="Password" color="black" width=".6" scale="1.5 1.5 1.5"></a-input>
+      <a-entity signup-fields></a-entity>
 
-      <a-button position=".736 -1.075 -2.944" name="stuff" value="Login" color="white" scale="0.8 0.8 0.8"></a-button>
-       <a-text position="-.37 -.49 -2.944" value=" or Login." scale=".5 .5 .5" text.height="1"></a-text>
-      
-      <a-entity id="BlackBottomCircle">
-        <a-image src="assets/ui/BlackCircle.png" scale="30 30 30" position="0 -28 0" rotation="-90 0 0" visible="true"></a-image>
-      </a-entity>
 
-       <a-entity id="navcubeRot">
-        <a-image data-array-link="nav" data-array="persist_ui" src="assets/ui/explore.png" position="-1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
+<!-- bottom nav row -->
+      <a-entity manhole></a-entity>
+      <a-entity nav-row="page: profile;"></a-entity>
 
-      <a-entity id="HelpNav">
-        <a-image data-array-link="help" data-array="persist_ui" src="assets/ui/help.png" position="1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
 
-<!-- bottom nav row --> 
-      <a-entity id="navcubeRot">
-        <a-image data-array-link="nav" data-array="persist_ui" src="assets/ui/explore.png" position="-1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
-
-      <a-entity id="HelpNav">
-        <a-image data-array-link="help" data-array="persist_ui" src="assets/ui/help.png" position="1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
-
-      <a-entity id="searcj_rot">
-        <a-image data-array-link="search_nav" data-array="persist_ui" src="assets/ui/search.png" position="-.8 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
-     
-      <a-entity id="profile_rot">
-        <a-image data-array-link="profile_nav" data-array="persist_ui" src="assets/ui/Profile.png" position="0 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
-      
-      <a-entity id="myPassport_rot">
-        <a-image data-array-link="myPassport_nav" data-array="persist_ui" src="assets/ui/myPassport.png" position=".8 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
-
-<!-- selection of button --> 
-
-      <a-entity id="searcj_rot">
-        <a-image data-array-link="search_nav" data-array="persist_ui" src="assets/ui/selected.png" position="0 -2 -3.79" width=".5" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
 
 <!-- User Name displaying My passport row -->
 
@@ -92,14 +66,14 @@
       <!-- END ENVIRONEMENT -->
     </a-scene>
     <script type="text/javascript">
-      let button = document.querySelector('a-button');
+     /* let button = document.querySelector('a-button');
       let toast = document.querySelector('a-toast');
       toast.addEventListener('actionclick', ()=>{
         toast.hide();
       })
       button.addEventListener('click', ()=> {
         toast.show();
-      })
+      })*/
     </script>
   </body>
 </html>
