@@ -94,6 +94,10 @@ AFRAME.registerComponent('discover-search', {
 			if (elems[i].item === "button") {
 				newEl.addEventListener('click', (event) => {
 					var input = document.querySelector('a-input');
+					var queryTerm = input.value;
+					if(queryTerm.length > 0){
+						this.runQuery(queryTerm);
+					}
 					console.log(input.value);
 				})
 			}
@@ -107,15 +111,18 @@ AFRAME.registerComponent('discover-search', {
 	runQuery: function (location) {
 		console.log(location);
 		if(axios){
+			var geocodeAPI = "4f03af1a1ea4428891dd006b61a9b4be";
 			// Figure out the geolocation
-			var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&pretty=1&key=" + geocodeAPI;
-			return axios.get(queryURL).then(function (response) {
+			var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&min_confidence=10&pretty=1&key=" + geocodeAPI;
+			return axios.get(queryURL).then((response) => {
+				console.log(response);
 				// If get get a result, return that result's formatted address property
 				if (response.data.results[0]) {
 					console.log(response.data.results[0].geometry);
 					console.log(response.data.results[0].geometry.lat);
 					console.log(response.data.results[0].geometry.lng);
-					getPic(response.data.results[0].geometry.lat, response.data.results[0].geometry.lng);
+					this.getPic(response.data.results[0].geometry.lat, response.data.results[0].geometry.lng);
+					//this.getPic();
 					//return response.data.results[0];
 				}
 				// If we don't get any results, return an empty string
@@ -125,25 +132,28 @@ AFRAME.registerComponent('discover-search', {
 		}
 	},
 
+	// Google Street view only returns an image if the lat/long (location) is near enough (corresponds) to
+	// A location which is a street and where a street view image exists.
 	getPic: function (queryLat, queryLng) {
 
 		var zoom = 1;
-		var lat = queryLat || 32.472170;
-		var lng = queryLng || 34.996909;
+		var lat = queryLat || 41.5044381; //32.472170;
+		var lng = queryLng || -81.6068944; //34.996909;
 		var loader = new GSVPANO.PanoLoader({zoom: zoom});
 
-		loader.onPanoramaLoad = function () {
+		loader.onPanoramaLoad = (data) => {
 			// did not think of creating a canvas element to hold the image but never attaching it to the DOM
-			var newImage = this.canvas.toDataURL();
+			console.log(data);
+			var newImage = data.toDataURL();
 			$('a-sky').attr('src', newImage);
-			console.log("LOADED:", this.canvas)
+			console.log("LOADED:", data)
 		};
 
 		// Invoke the load method with a LatLng point.
 		loader.load(new google.maps.LatLng(lat, lng));
 
 		// Set error handle.
-		loader.onError = function (message) {
+		loader.onError = (message) => {
 			alert(message);
 		}
 
