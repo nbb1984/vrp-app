@@ -49,12 +49,17 @@ router.get('/login', (req, res) => {
 router.get('/search', (req, res) => {
 	res.sendFile("search.html", options)
 });
+
+router.get('/search-results', (req, res) => {
+	res.sendFile("search_results.html", options)
+});
+
 router.get('/explore', (req, res) => {
 	res.sendFile("explore.html", options)
 });
 
 router.get('/explore/categories', (req, res) => {
-	res.sendFile("explore_categories.html", options)
+	res.sendFile("explore_category.html", options)
 });
 router.get('/index', (req, res) => {
 	res.sendFile("index.html", options);
@@ -64,12 +69,15 @@ router.get('/profile', (req, res) => {
 	res.sendFile("profile.html", options)
 });
 
+router.get('/profile-expanded', (req, res) => {
+	res.sendFile("profile_with_images.html", options)
+});
 
 router.get('/signup', (req, res) => {
 	res.sendFile("signup.html", options);
 });
-router.get('/gallery', (req, res) => {
-	res.sendFile("gallery.html", options);
+router.get('/discover', (req, res) => {
+	res.sendFile("discovery_search.html", options);
 });
 
 router.get('/dims/:page', (req, res) => {
@@ -94,7 +102,7 @@ router.get('/thumbnails/*', (req, res) => {
 		.toBuffer()
 		.then((response) => {
 			console.log('response will print here next run');
-			res.set('Content-Type', 'image/jpg');
+			res.set('Content-Type', 'image/' + content);
 			res.send(response);
 		})
 	/*fs.readFile(filePath, (err, data) =>{

@@ -17,9 +17,6 @@
   <script src="https://unpkg.com/aframe-layout-component@4.2.0/dist/aframe-layout-component.min.js"></script>
   <script src="https://unpkg.com/aframe-template-component@^3.2.1/dist/aframe-template-component.min.js"></script>
   <script src="/public/js/set-image.js"></script>
-
-  <script src="/public/js/nav-row.js"></script>
-  <script src="/public/js/manhole.js"></script>
   <script src="/public/js/linking.js"></script>
 
 </head>
@@ -72,10 +69,7 @@
     </script>
   </a-assets>
 
-  <a-entity manhole></a-entity>
-  <a-entity nav-row="page: profile;"></a-entity>
-
-<!--  <a-entity id="BlackBottomCircle">
+  <a-entity id="BlackBottomCircle">
     <a-image src="assets/ui/BlackCircle.png" scale="30 30 30" position="0 -28 0" rotation="-90 0 0"
              visible="true"></a-image>
   </a-entity>
@@ -88,7 +82,7 @@
   <a-entity id="HelpNav">
     <a-image class="icon" data-array-link="help" data-array="persist_ui" src="assets/ui/help.png" position="1.6 -2 -3.8" width=".5"
              height=".5" rotation="-10 0 0"></a-image>
-  </a-entity>-->
+  </a-entity>
 
   <!-- Image links. -->
   <a-entity id="links" layout="type: line; margin: .3" position="-.6 0 -1.">
@@ -103,7 +97,7 @@
     </a-entity>
 
 
-   <!-- <a-entity id="searcj_rot">
+    <a-entity id="searcj_rot">
       <a-image class="icon" data-array-link="search_nav" data-array="persist_ui" src="assets/ui/search.png"
                linking="target: http://localhost:9000/search" position="-.8 -2 -3.8" width=".5" height=".5"
                rotation="-10 0 0"></a-image>
@@ -117,7 +111,7 @@
     <a-entity id="myPassport_rot">
       <a-image class="icon" data-array-link="myPassport_nav" data-array="persist_ui" linking="target: http://localhost:9000/profile-expanded" src="assets/ui/myPassport.png"
                position=".8 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
-    </a-entity>-->
+    </a-entity>
 
 
 </a-scene>

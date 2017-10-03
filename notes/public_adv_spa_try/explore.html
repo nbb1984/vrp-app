@@ -13,11 +13,8 @@
     <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/public/js/nav-row.js"></script>
-    <script src="/public/js/manhole.js"></script>
-    <script src="/public/js/linking.js"></script>
-
-    <script src="/public/js/category-row.js"></script>
+    
+    
   </head>
   <body>
 
@@ -33,19 +30,44 @@
           animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500"
           event-set__1="_event: mouseenter; color: #549ad5"
           event-set__2="_event: mouseleave; color: #ededed"
-          raycaster="far: 20;  objects: .clickable"></a-cursor>
+          raycaster="far: 20; interval: 1000; objects: .clickable"></a-cursor>
         </a-entity>
       </a-entity>
 
+      <a-entity id="BlackBottomCircle">
+        <a-image src="assets/ui/BlackCircle.png" scale="30 30 30" position="0 -28 0" rotation="-90 0 0" visible="true"></a-image>
+      </a-entity>
 
+     
+<!-- bottom nav row --> 
+      <a-entity id="navcubeRot">
+        <a-image data-array-link="nav" data-array="persist_ui" src="assets/ui/explore.png" position="-1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
 
-      <a-entity manhole></a-entity>
-      <a-entity nav-row="page: explore;"></a-entity>
+      <a-entity id="HelpNav">
+        <a-image data-array-link="help" data-array="persist_ui" src="assets/ui/help.png" position="1.6 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
 
+      <a-entity id="searcj_rot">
+        <a-image data-array-link="search_nav" data-array="persist_ui" src="assets/ui/search.png" position="-.8 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
+     
+      <a-entity id="profile_rot">
+        <a-image data-array-link="profile_nav" data-array="persist_ui" src="assets/ui/Profile.png" position="0 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
+      
+      <a-entity id="myPassport_rot">
+        <a-image data-array-link="myPassport_nav" data-array="persist_ui" src="assets/ui/myPassport.png" position=".8 -2 -3.8" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
+
+<!-- select bottom nav row --> 
+    <a-entity id="navcubeRot">
+        <a-image data-array-link="nav" data-array="persist_ui" src="assets/ui/selected.png" position="-1.6 -2 -3.79" width=".5" height=".5" rotation="-10 0 0"></a-image>
+      </a-entity>
 
 <!-- catagory row -->
-    <a-entity cat-row="cat: mural;"></a-entity>
-     <!--<a-entity id="">
+
+     <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="assets/ui/art.png" position="-1.6 -1.3 -4.1" width=".75" height=".75" rotation="-10 0 0"></a-image>
       </a-entity>
 
@@ -64,11 +86,11 @@
       <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="assets/ui/video.png" position="1.6 -1.3 -4.1" width=".75" height=".75" rotation="-10 0 0"></a-image>
       </a-entity>
-    -->
+    
     <!-- select cat nav row --> 
-      <!-- <a-entity id="">
+       <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/ui/selected.png" position="-.8 -1.3 -4.09" width=".75" height=".75" rotation="-10 0 0"></a-image>
-      </a-entity>-->
+      </a-entity>
 
     <!-- catagory results row 1 -->
       <a-entity id="">

@@ -1,0 +1,47 @@
+The route "/userData" will return  information about the user in this format.  Sorry, the indentation gets screwed up when I copy and paste.
+
+
+{
+"_id": "59ca9e313090c5265896900f",
+"email": "billy@thing.com",
+"username": "billybob",
+"password": "$2a$10$9U.MOmGeA2s2llR836BL5OaAfKy2Rw3ViUTvcrqP/0LIPNGt5eG7q",
+"__v": 0,
+"friends": [
+{
+"_id": "59ca9e053090c5265896900e",
+"email": "nickbole@thing.com",
+"username": "nickbole",
+"password": "$2a$10$rvKdPyOdbx2V6PuD.4C1FO4gJe3Uw6jnKt8FsBAjvDZxVwKzHrvdy",
+"__v": 0,
+"friends": [],
+"searches": []
+}
+],
+"searches": [
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{},
+{
+"_id": "59cc221f2c339b2338ee119b",
+"query": "Wellington, Wellington City, New Zealand",
+"hits": 3,
+"__v": 0,
+"date": "2017-09-27T22:11:43.113Z"
+}
+]
+}
