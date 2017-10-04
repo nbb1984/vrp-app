@@ -238,9 +238,10 @@ router.get("/save/photo/:coords/:address", function(req, res){
     })
 });
 
-router.get("/delete/photo/:coords", function(req, res){
-    loadPhoto.removePic(function(coords){
-        res.json({ok: true, coords: coords});
+router.get("/delete/photo/:coords/:filePath", function(req, res){
+  console.log(req.params.coords);
+    loadPhoto.removePic(req.params.coords, req.params.filePath, function(result){
+        res.json({ok: true, coords: result.coords, picturePath: result.path});
     })
 });
 

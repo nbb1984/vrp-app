@@ -36,7 +36,7 @@ module.exports.photoUpload = function(coords, address, callback) {
 
             writestream.on('close', function(file) {
                 console.log(coords + "Written to db");
-                callback();
+                callback(address);
             });
         } else {
             callback(address);
