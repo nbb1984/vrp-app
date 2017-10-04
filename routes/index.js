@@ -22,6 +22,7 @@ router.get("/register-success", (req, res) => {
 });
 
 
+
 /*router.get("/register", function (req, res) {
 	console.log("go to registration");
 	res.sendFile(pathHelper._root + "/public/registration.html");

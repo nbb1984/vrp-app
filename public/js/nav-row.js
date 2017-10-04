@@ -104,8 +104,9 @@ AFRAME.registerComponent('nav-row', {
 		var basePath = "assets/ui/";
 
 		var elems = [
-			{element: "a-image", file: "HelpMenu.png", height: 6, width: 10, position: {x: -1.6, y: -1, z: -2}, rotation: {x: -10, y: 0, z:0}, scale: {x: 0.5, y: 0.5, z: 0.5}},
-			{element: "a-image", file:"login_signup_Btn.png", class:"clickable", position: {x: 1.6, y: -2, z: -1.8}}, // will be logout
+			{'data-label': 'info', element: "a-image", file: "HelpMenu.png", height: 6, width: 10, position: {x: -1.6, y: -1, z: -2}, rotation: {x: -10, y: 0, z:0}, scale: {x: 0.5, y: 0.5, z: 0.5}},
+			{'data-label': 'logout',element: "a-image", file:"login_signup_Btn.png", class:"clickable", position: {x: 1.6, y: -2, z: -1.8}}, // will be logout
+			{'data-label': 'hideMenus',element: "a-image", file: "ic_visibility_off_black_48dp_2x.png", class: "clickable",   position:  {x: 1.6, y: -1, z: -1.8}}
 			/*			{page: "search", file:"search.png", class:"clickable",position: {x: -0.8, y: -2, z: -3.8}},
 						{page: "profile", file:"Profile.png", class:"clickable",position: {x: 0, y: -2, z: -3.8}},
 						{page: "profile-expanded",  file:"myPassport.png", class:"clickable",position: {x: .8, y: -2, z: -3.80}},
@@ -126,6 +127,33 @@ AFRAME.registerComponent('nav-row', {
 					newEl.setAttribute('src', basePath + elems[i].file);
 				}
 			}
+/*			if(elems[i]['data-label'] === 'hideMenus'){
+				newEl.addEventListener('click', function(event){
+					var allMenus = document.querySelectorAll('a-entity.nav-content');
+					for(var n=0; n<allMenus.length; n++){
+						allMenus[n].setAttribute('visible', 'false');
+					}
+					var helpMenu = document.querySelector('a-entity#helpMenuContainer');
+					helpMenu.parentNode.removeChild(helpMenu);
+					var sceneEl = document.querySelector('a-scene');
+					var showBtn = document.createElement('a-image');
+					showBtn.setAttribute('position', {x: 1.6, y: -2, z: -3.8});
+					showBtn.setAttribute('id', 'showBtn');
+					showBtn.setAttribute('class', 'showclick');
+					showBtn.setAttribute('src', basePath + "ic_visibility_black_48dp_2x.png");
+					showBtn.addEventListener('click', function(event){
+						var allMenus = document.querySelectorAll('a-entity.nav-content');
+						for(var n=0; n<allMenus.length; n++){
+							allMenus[n].setAttribute('visible', 'true');
+						}
+						document.querySelector('a-cursor#cursor').components.raycaster.objects = '.clickable';
+						var showIcon = document.querySelector('a-image#showBtn');
+						showIcon.parentNode.removeChild(showIcon);
+					});
+					sceneEl.appendChild(showBtn);
+					document.querySelector('a-cursor#cursor').components.raycaster.objects = '.showclick';
+				})
+			}*/
 			container.appendChild(newEl);
 		}
 

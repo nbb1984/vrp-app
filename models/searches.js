@@ -5,11 +5,23 @@ var Schema = mongoose.Schema;
 // Create the Note schema
 var SearchSchema = new Schema({
 	// Just a string
-	query: {
+	address: {
+		type: String
+	},
+	fsPicturePath: {
 		type: String
 	},
 	hits: {
 		type: Number
+	},
+	coords: {
+		type: String
+	},
+	lat: {
+		type: String
+	},
+	lng: {
+		type: String
 	},
 	date: {
 		type: Date,

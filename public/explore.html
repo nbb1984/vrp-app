@@ -12,12 +12,15 @@
 
     <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
     <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-    <script src="/public/js/nav-row.js"></script>
-    <script src="/public/js/manhole.js"></script>
-    <script src="/public/js/linking.js"></script>
+    <script src="https://unpkg.com/aframe-animation-component@3.2.5/dist/aframe-animation-component.min.js"></script>
 
-    <script src="/public/js/category-row.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+
+    <script src="js/nav-row.js"></script>
+    <script src="js/manhole.js"></script>
+    <script src="js/linking.js"></script>
+    <script src="js/category-row.js"></script>
   </head>
   <body>
 
@@ -40,15 +43,15 @@
 
 
       <a-entity manhole></a-entity>
-      <a-entity nav-row="page: explore;"></a-entity>
+      <a-entity class="nav-content" nav-row="page: explore;"></a-entity>
 
 
 <!-- catagory row -->
-    <a-entity cat-row="cat: mural;"></a-entity>
+    <a-entity class="nav-content" cat-row="cat: mural;"></a-entity>
 
 
     <!-- catagory results row 1 -->
-      <a-entity id="">
+     <!-- <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc2.jpg" position="-2.22 -.38 -3.65" width="1" height=".5" rotation="-10 0 0"></a-image>
       </a-entity>
 
@@ -68,7 +71,7 @@
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc2.jpg" position="2.22 -.38 -3.65" width="1" height=".5" rotation="-10 0 0"></a-image>
       </a-entity>
     
-    <!-- catagory results row 2 -->
+    &lt;!&ndash; catagory results row 2 &ndash;&gt;
       <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc3.jpg" position="-2.22 .19 -3.75" width="1" height=".5" rotation="-10 0 0"></a-image>
       </a-entity>
@@ -89,7 +92,7 @@
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc2.jpg" position="2.22 .19 -3.75" width="1" height=".5" rotation="-10 0 0"></a-image>
       </a-entity>
 
- <!-- catagory results row 3 if have time -->
+ &lt;!&ndash; catagory results row 3 if have time &ndash;&gt;
       <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc3.jpg" position="-2.22 .77 -3.85" width="1" height=".5" rotation="-10 0 0"></a-image>
       </a-entity>
@@ -108,7 +111,7 @@
       
       <a-entity id="">
         <a-image data-array-link="cat" data-array="persist_ui" src="/thumbnails/images/loc2.jpg" position="2.22 .77 -3.85" width="1" height=".5" rotation="-10 0 0"></a-image>
-      </a-entity>
+      </a-entity>-->
 
   </a-scene>
 

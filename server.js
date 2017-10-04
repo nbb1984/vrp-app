@@ -1,8 +1,9 @@
 // Include Server Dependencies
+var dotenv = require('dotenv');
+dotenv.load();
 var express = require("express");
 var bodyParser = require("body-parser");
 var logger = require("morgan");
-
 var cookieParser = require("cookie-parser");
 var expressValidator = require("express-validator");
 var serveStatic = require('serve-static');
@@ -19,6 +20,8 @@ var app = express();
 var users = require("./routes/users");
 var routes = require("./routes/index");
 var content = require("./routes/content");
+var searches = require('./routes/searchRoutes');
+var curated = require('./routes/curated');
 // Require History Schema
 var User = require("./models/user");
 // Sets an initial port. We'll use this later in our listener
@@ -38,7 +41,7 @@ app.use("/img", serveStatic(path.join(__dirname, "/img/")));
 app.use("/components", serveStatic(path.join(__dirname, "/components/")));
 app.use("/lib", serveStatic(path.join(__dirname, "/lib/")));
 app.use("/public/", serveStatic(path.join(__dirname, "/public/")));
-app.use("/public/js/", serveStatic(path.join(__dirname, "/public/js/")));
+app.use("/js", serveStatic(path.join(__dirname, "/public/js/")));
 
 // -------------------------------------------------
 let db = require('./database');
@@ -93,6 +96,8 @@ console.log("server js ran");
 
 
 app.use('/', routes);  // temporary disable for dev
+app.use('/', searches);
+app.use('/', curated);
 app.use('/', users);
 app.use('/', content);
 

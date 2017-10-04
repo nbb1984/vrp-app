@@ -37,11 +37,11 @@ AFRAME.registerComponent('discover-search', {
 			dir: "normal"
 		});
 		var scene = document.querySelector('a-scene');
-		scene.addEventListener('keyboardIsOpen', function(){
+		scene.addEventListener('keyboardIsOpen', function () {
 			el.emit("keyboardIsOpenMove");
 			//console.log(el.components)
 		});
-		scene.addEventListener('keyboardIsClosed', function(){
+		scene.addEventListener('keyboardIsClosed', function () {
 			el.emit("keyboardIsClosedMove");
 			//console.log(el.components)
 		})
@@ -95,8 +95,14 @@ AFRAME.registerComponent('discover-search', {
 				newEl.addEventListener('click', (event) => {
 					var input = document.querySelector('a-input');
 					var queryTerm = input.value;
-					if(queryTerm.length > 0){
-						this.runQuery(queryTerm);
+					this.demoRun();
+					//this.getPic();
+					/*this.runQuery('liberty bell USA');
+					this.runQueryBackEnd('liberty bell');*/
+					if (queryTerm) {
+						if (queryTerm.length > 0) {
+							//	this.runQuery(queryTerm);
+						}
 					}
 					console.log(input.value);
 				})
@@ -107,21 +113,55 @@ AFRAME.registerComponent('discover-search', {
 		}
 	},
 
+	demoRun: function(){
+		var baseUrl = window.location.origin;
+		var queryUrl = baseUrl + '/geoSearch';
+		axios.get(queryUrl)
+			.then((response) => {
+				console.log(response);
+			})
+	},
+
+	runQueryBackEnd: function (location) {
+		console.log(location);
+		if (axios) {
+			var baseUrl = window.location.origin;
+			var queryUrl = baseUrl + '/user/search';
+			return axios.post(queryUrl, {query: location}).then((response) => {
+				console.log(response);
+				var placeName = response.data[1].address.replace(/\s*/, "+");
+				//this.runQuery(encodeURI(placeName));
+				var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
+			/*	axios.get(getImage)
+					.then((response) => {
+						console.log(response);
+					})
+					.catch(err => {
+						console.log(err);
+					})*/
+			});
+		}
+	},
 
 	runQuery: function (location) {
 		console.log(location);
-		if(axios){
+		if (axios) {
 			var geocodeAPI = "4f03af1a1ea4428891dd006b61a9b4be";
 			// Figure out the geolocation
-			var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&min_confidence=10&pretty=1&key=" + geocodeAPI;
+			var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&min_confidence=9&pretty=1&key=" + geocodeAPI;
 			return axios.get(queryURL).then((response) => {
 				console.log(response);
 				// If get get a result, return that result's formatted address property
 				if (response.data.results[0]) {
+					var lat =response.data.results[0].geometry.lat;
+					var lng = response.data.results[0].geometry.lng;
 					console.log(response.data.results[0].geometry);
-					console.log(response.data.results[0].geometry.lat);
-					console.log(response.data.results[0].geometry.lng);
-					this.getPic(response.data.results[0].geometry.lat, response.data.results[0].geometry.lng);
+					console.log(lat);
+					console.log(lng);
+					//var newImage = this.getPic(lat, lng);
+					this.getPic(lat, lng);
+
+
 					//this.getPic();
 					//return response.data.results[0];
 				}
@@ -137,16 +177,20 @@ AFRAME.registerComponent('discover-search', {
 	getPic: function (queryLat, queryLng) {
 
 		var zoom = 1;
-		var lat = queryLat || 41.5044381; //32.472170;
-		var lng = queryLng || -81.6068944; //34.996909;
+		var lat = queryLat || 41.5044381; //39.9495073;//41.5044381; //32.472170;
+		var lng = queryLng || -81.6068944; //-75.1506225;//-81.6068944; //34.996909;
 		var loader = new GSVPANO.PanoLoader({zoom: zoom});
 
 		loader.onPanoramaLoad = (data) => {
-			// did not think of creating a canvas element to hold the image but never attaching it to the DOM
-			console.log(data);
-			var newImage = data.toDataURL();
-			$('a-sky').attr('src', newImage);
-			console.log("LOADED:", data)
+			try{
+				// did not think of creating a canvas element to hold the image but never attaching it to the DOM
+				console.log(data);
+				var newImage = data.toDataURL();
+				console.log("LOADED:", data);
+				this.showPic(newImage, lat, lng);
+			} catch(err){
+				console.log(err);
+			}
 		};
 
 		// Invoke the load method with a LatLng point.
@@ -155,8 +199,37 @@ AFRAME.registerComponent('discover-search', {
 		// Set error handle.
 		loader.onError = (message) => {
 			alert(message);
+			return null;
 		}
 
+	},
+
+	showPic: function(newImage, lat, lng){
+		console.log('newImage');
+		if(newImage){
+			$('a-sky').attr('src', newImage);
+			$('a-sky').attr('data-lat', lat);
+			$('a-sky').attr('data-lng', lng);
+		} else {
+			// inform user no image was found
+		}
+	},
+	saveImage: function(){
+		var sky = document.querySelector('a-sky');
+		var lat = sky.getAttribute('data-lat');
+		var lng = sky.getAttribute('data-lng');
+		var src = sky.getAttribute('src');
+		axios.get(src)
+			.then((response) => {
+				console.log(response);
+			})
+		var baseUrl = window.location.origin;
+		var queryUrl = baseUrl + '/search-save';
+		return axios.post(queryUrl, {query: location}).then((response) => {
+			console.log(response);
+			var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
+
+		});
 	}
 
 });

@@ -18,7 +18,7 @@ AFRAME.registerComponent('help-menu', {
 
 		this.buildAndAttach();
 	},
-
+	// ACTUAL IMPLEMENTATION IS LOCATED WITHIN THE nav-row.js FILE
 
 	buildAndAttach: function () {
 		var data = this.data;
@@ -28,6 +28,7 @@ AFRAME.registerComponent('help-menu', {
 		var elems = [
 			{element: "a-image", file: "HelpMenu.png", class:"clickable", position: {x: -1.6, y: -2, z: -1.8}},
 			{element: "a-image", file:"login_signup_Btn.png", class:"clickable", position: {x: 1.6, y: -2, z: -1.8}},
+			{element: "a-image", file: "ic_visibility_off_black_48dp_2x.png", class: "clickable",  scale: {x: 1.5, y: 1.5, z: 1.5}, position:  {x: 1.6, y: -1, z: -1.8}}
 /*			{page: "search", file:"search.png", class:"clickable",position: {x: -0.8, y: -2, z: -3.8}},
 			{page: "profile", file:"Profile.png", class:"clickable",position: {x: 0, y: -2, z: -3.8}},
 			{page: "profile-expanded",  file:"myPassport.png", class:"clickable",position: {x: .8, y: -2, z: -3.80}},

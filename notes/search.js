@@ -19,4 +19,4 @@ $(document).ready(function(){
 		str = str.slice(0, -1);
 		console.log(str);
 	});
-})
+});

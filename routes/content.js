@@ -126,7 +126,11 @@ router.post('/fileUpload', (req, res) => {
 
 	console.log(req.body);
 	res.end();
-})
+});
+
+router.get('/adminDashboard', (req, res) =>{
+	res.sendFile("admin_dashboard.html", options)
+});
 
 module.exports = router;
 
