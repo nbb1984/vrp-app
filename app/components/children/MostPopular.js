@@ -3,10 +3,6 @@ var React = require("react");
 var helpers = require("../utils/helpers");
 var MostPopular = React.createClass({
   // Here we set a generic state associated with the text being searched for
-  getInitialState: function() {
-    console.log('got state?');
-    return {popSearches: []};
-  },
 
   render: function() {
     var that = this;

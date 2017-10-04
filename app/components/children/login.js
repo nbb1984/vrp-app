@@ -6,7 +6,6 @@ var helpers = require("../utils/helpers");
 var Login = React.createClass({
   // Here we set a generic state associated with the text being searched for
   getInitialState: function() {
-    console.log("thing");
     return { username: "", password: "", visible: false, successMsg: [], errorMsg: [], username: "" };
   },
 
@@ -18,7 +17,6 @@ var Login = React.createClass({
       } 
       if (localStorage._id) {
         var that = this;
-        console.log(localStorage._id);
         that.props.setLogOut(localStorage._id, function(userdata){
           that.setState({username: userdata.data.username});
         });     
@@ -49,12 +47,10 @@ var Login = React.createClass({
           localStorage.setItem("_id", response.data._id);
           // Update the userpage with the new login information.
           that.props.setLogOut(localStorage._id, function(userdata){
-            console.log(userdata);
             that.setState({username: userdata.data.username});
           });   
         } else {
           that.setState({errorMsg: ["There was an error logging in.  Check your username and password."], loggedIn: false});
-          console.log(that.state.errorMsg);
         }
         //this.setState({username: response.data.username, email: response.data.email, loggedIn: true);
     }.bind(this)).catch(function(err){

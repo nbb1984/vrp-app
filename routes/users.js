@@ -5,254 +5,295 @@ var LocalStrategy = require('passport-local').Strategy;
 var app = express();
 var User = require('../models/user');
 var Search = require('../models/searches');
-
-// Register User
-router.post('/registerUser', function(req, res){
-	console.log("register user backend");
-  console.log(req.body);
-	
-  var username = req.body.username;
-	var email = req.body.email;
-	var password = req.body.password;
-	var password2 = req.body.password2;
-
-  User.getUserByUsername(username, function(err, user){
-    if(err) throw err;
-    if(user){ 
-      return res.json([{param: 'username', msg: 'Username already exists'}]);
-    } else {
-
-    	// Validation
-      req.checkBody('username', 'Username is required').notEmpty();
-    	req.checkBody('email', 'Email is required').notEmpty();
-    	req.checkBody('email', 'Email is not valid').isEmail();
-    	req.checkBody('password', 'Password is required').notEmpty();
-      req.checkBody('password', 'Password must be at least six characters and must contain at least one number, one capital letter, and one lower case letter').isLength({ min: 6 }).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
-    	req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
-
-    	var errors = req.validationErrors();
-
-    	if(errors){
-        console.log(errors);
-        res.json(errors);
+var axios = require("axios");
+var path = require("path");
+var geocode = require("./geocode.js");
+var loadPhoto = require("./fileRetrieve.js");
 
 
-    	} else {
-        console.log("registered!!!!!!!!!!!!!!!!!!!!!!");
-    		var newUser = new User({
-    			email: email,
-    			username: username,
-    			password: password
-    		});
+// Register User 
+router.post('/registerUser', function(req, res) {
+    var username = req.body.username;
+    var email = req.body.email;
+    var password = req.body.password;
+    var password2 = req.body.password2;
 
-    		User.createUser(newUser, function(err, user){
-    			if(err) throw err;
-          console.log(user);
-    		})
+    User.getUserByUsername(username, function(err, user) {
+        if (err) throw err;
+        if (user) {
+            return res.json([{ param: 'username', msg: 'Username already exists' }]);
+        } else {
 
-        req.flash('success_msg', 'You are registered and can now login');
-        res.status(200);
-        res.redirect('/login?success');
+            // Validation
+            req.checkBody('username', 'Username is required').notEmpty();
+            req.checkBody('email', 'Email is required').notEmpty();
+            req.checkBody('email', 'Email is not valid').isEmail();
+            req.checkBody('password', 'Password is required').notEmpty();
+            req.checkBody('password', 'Password must be at least six characters and must not contain any special characters and must contain at least one number, one capital letter, and one lower case letter').isLength({ min: 6 }).matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[0-9a-zA-Z]{8,}$/, "i");
+            req.checkBody('password2', 'Passwords do not match').equals(req.body.password);
 
-      }
-	 }
-  });
+            var errors = req.validationErrors();
+
+            if (errors) {
+                res.json(errors);
+
+
+            } else {
+                var newUser = new User({
+                    email: email,
+                    username: username,
+                    password: password
+                });
+
+                User.createUser(newUser, function(err, user) {
+                    if (err) throw err;
+                })
+
+                req.flash('success_msg', 'You are registered and can now login');
+                res.status(200);
+                res.redirect('/login?success');
+
+            }
+        }
+    });
 });
 
 
 passport.use(new LocalStrategy(
-  function(username, password, done) {
-   User.getUserByUsername(username, function(err, user){
-   	if(err) throw err;
-   	if(!user){ 
-      return done(null, false, {message: 'User not found'});
-   	}
+    function(username, password, done) {
+        User.getUserByUsername(username, function(err, user) {
+            if (err) throw err;
+            if (!user) {
+                return done(null, false, { message: 'User not found' });
+            }
 
-   	console.log("found a user?????")
-   	User.comparePassword(password, user.password, function(err, isMatch){
-   		if(err) {
-   			console.log("error here");
-   			throw err;
-   		}
+            User.comparePassword(password, user.password, function(err, isMatch) {
+                if (err) {
+                    console.log("error here");
+                    throw err;
+                }
 
-   		if(isMatch){
-   			console.log("user matched!!!!!!!!!!");
-   			console.log(user);
-   			return done(null, user);
-   		} else {
-   			console.log("no match!!!!!!");
-   			return done(null, false, {message: 'Unknown Password'});
-   		}
-   	});
-   });
-  }));
+                if (isMatch) {
+                    return done(null, user);
+                } else {
+                    console.log("no match!!!!!!");
+                    return done(null, false, { message: 'Unknown Password' });
+                }
+            });
+        });
+    }));
 
 passport.serializeUser(function(user, done) {
-	console.log("user serialized");
-  console.log(user.id);
-  console.log("user serialized");
-  done(null, user.id);
+    done(null, user.id);
 });
 
 passport.deserializeUser(function(id, done) {
-  User.getUserById(id, function(err, user) {
-
-  	console.log(err);
-    done(err, user);
-  });
+    User.getUserById(id, function(err, user) {
+        done(err, user);
+    });
 });
 
 router.get("/userData", function(req, res) {
-  console.log("got this");
-  console.log(req.user);
-  console.log("got this");
-  var id = req.user._id;
-  console.log(id);
-  var username = req.user.username; 
-  var email = req.user.email; 
-  var searches = req.user.searches;
-  console.log(id);
-  User.findOne({ "_id": req.user._id })
-    // ..and populate all of the Searchs associated with it
-    .populate("searches") 
-    .populate("friends")
-    // now, execute our query
-    .exec(function(error, doc) {
-      // Log any errors
-      console.log("Got em!!!!!!!!!!!!!!!!!!!!");
-      console.log(doc);
-      console.log("Got em!!!!!!!!!!!!!!!!!!!!")
-      if (error) {
-        console.log(error);
-      }
-      // Otherwise, send the doc to the browser as a json object
-      else {
-        res.json(doc);
-      }
-    });
-  });
+    console.log(req.user);
+    var userObject = req.user;
+    var id = req.user._id;
+    var username = req.user.username;
+    var email = req.user.email;
+    var searches = req.user.searches;
+    var user;
+    var myfriends = [];
+
+    User.findOne({ "_id": req.user._id })
+        // ..and populate all of the Searchs associated with it
+        .populate("searches")
+        .populate("friends")
+        // now, execute our query
+        .exec(function(error, doc) {
+            // Log any errors
+            if (error) {
+                console.log(error);
+            }
+            // Otherwise, send the doc to the browser as a json object
+            else {
+                console.log(doc.friends);
+                var result = doc.friends;
+                for (var i = 0; i < result.length; i++) {
+                    myfriends.push(User.findOne({ "_id": result[i]._id })
+                        .populate("searches")
+                        .exec()
+                    );
+                }
+
+                Promise.all(myfriends).then(response => {
+                    res.json({ friends: response, user: doc });
+                });
+
+            }
+        });
+});
+
 
 // Code for getting the popular search data.  
 router.get("/searches", function(req, res) {
-  Search.find({}).sort([
-    ["hits", "descending"]
-  ]).limit(5)
-    .exec(function(error, doc) {
-      if (error) {
-        console.log(error);
-      }
-      // Otherwise, send the doc to the browser as a json object
-      else {
-        res.json(doc);
-      }
-    });
-  });
-// Create a new Search or replace an existing Search
-router.post("/user/search", function(req, res) {
-  console.log(req.body);
-  Search.findOne({ "query": req.body.query }, function(result) {
-    if (result) {
-      console.log(result)
-      var hits = result.hits;
-      hits++;
-      Search.findOneAndUpdate({ "_id": result._id }, {"hits": hits}, function(searches){
-        if (error) {
-          console.log(error);
-        } 
-        else {
-          return res.json(searches);
-        }       
-      });
-    } 
 
-    else {
-      // Create a new Search and pass the req.body to the entry
-      var newSearch = new Search(req.body);
-      console.log("Req.body:")
-      console.log(req.body);
-      // And save the new Search the db
-      newSearch.save(function(error, doc) {
-        // Log any errors
-        if (error) {
-          console.log(error);
-        }
-        // Otherwise
-        else {
-          // Use the article id to find and update it's Search
-           User.findOneAndUpdate({ "_id": req.user._id }, { $push: { "searches": doc._id } }, { new: true }, function(err, newdoc) {
-                // Send any errors to the browser
-                if (err) {
-                  res.send(err);
-                }
-                // Or send the newdoc to the browser
-                else {
-                  console.log('this happened');
-                  return res.json(newdoc);
-                }
-            });
-          }
-        });      
-        }
-      })
-
-  });
-
-router.get("/user/findall", function(req, res) {
-  User.find({}).exec(function(err, result) {
-      if (err){
-        throw err
-      }
-      else {
-        return res.json(result);
-      }
-  });
-});
-
-// Create a new Search or replace an existing Search
-router.get("/user/addFriend/:id", function(req, res) {
-  console.log(req.body);
-      User.findOneAndUpdate({ "_id": req.user._id }, { $push: { "friends": req.params.id } }, function(err, user){
-        if (err) {
-          console.log(err);
-        } 
-        else {
-          return res.json(user);
-        }       
-      });
-    }); 
-
-
-// Code to untag a search.  
-router.get("/search/delete/:id/:userId", function(req, res) {
-      var id = req.params.id;
-      // Use the article id to find and delete it's Search
-       User.findOneAndUpdate({ "_id": req.params.userId }, { $pull: { "searches": req.params.id } }, function(err, newdoc) {
-            // Send any errors to the browser
-            if (err) {
-              res.send(err);
+    Search.find({}).sort([
+            ["hits", "descending"]
+        ])
+        .exec(function(error, doc) {
+            if (error) {
+                console.log(error);
             }
-            // Or send the newdoc to the browser
+            // Otherwise, send the doc to the browser as a json object
             else {
-              console.log('this happened');
-              return res.json(newdoc);
+                res.json(doc);
             }
         });
+});
+// Create a new Search or replace an existing Search
+router.post("/user/search", function(req, res) {
+
+    geocode.getCoordsAndAddress(req.body.query, function(result) {
+        var googlePicturePath = "http://maps.googleapis.com/maps/api/streetview?size=600x300&location=" + result.coords + "%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw";
+        Search
+            .findOneAndUpdate({
+                "address": result.address
+            }, {
+                $inc: { 'hits': 1 }
+            })
+            .catch(function(err) {
+                console.log(err);
+            })
+            .then(function(update) {
+                if (!update) {
+                  console.log("no result!!!!");
+                  console.log(result.address);
+                  console.log(result.coords);
+                    // Create a new Search and pass the req.body to the entry
+                    var fsPicPath = path.join(__dirname, '../public/images/' + result.coords + '.png');
+                    var newSearch = new Search({
+                        "address": result.address,
+                        "fsPicturePath": fsPicPath,
+                        "coords": result.coords,
+                        "hits": 1
+                    });
+                    // And save the new Search the db
+                    newSearch.save(function(error, doc) {
+                        // Log any errors
+                        if (!doc) {
+                          console.log("this is really weird");
+                          console.log(req.user);
+                          console.log(error);
+                        }
+                        // Otherwise
+                        else {
+                          console.log("Why isn't this running?");
+                            // Use the user id to find and update it's searches
+                            User.findOneAndUpdate({ "_id": req.user._id }, { $push: { "searches": doc._id } }, { new: true }, function(err, newdoc) {
+                                // Send any errors to the browser
+                                if (err) {
+                                    res.send(err);
+                                }
+                                // Or send the new info about the user to the browser. 
+                                else {
+                                  console.log("newdoc coming!!!!!");
+                                  console.log([newdoc, {coords: result.coords, address: result.address}]);
+                                    res.json([newdoc, {coords: result.coords, address: result.address}]);
+                                }
+                            });
+                        }
+                        console.log("skipped the if/else");
+                    });
+                } else {
+                  console.log("we got a result!!!!!!");
+                  console.log(req.user._id);
+                  console.log(update._id);
+                    User.findOneAndUpdate({ "_id": req.user._id }, { $push: { "searches": update._id } }, { new: true }, function(err, newdoc) {
+                        // Send any errors to the browser
+                        if (err) {
+                            res.send(err);
+                        }
+                        // Or redirect to get the userdata again and reload. 
+                        else {
+                            console.log("newdoc coming!!!!");
+                            console.log([newdoc, {coords: result.coords, address: result.address}]);
+                            res.json([newdoc, {coords: result.coords, address: result.address}]);
+                        }
+                    });
+                }
+
+            });
+    })
+
+
+});
+
+router.get("/save/photo/:coords/:address", function(req, res){
+    loadPhoto.retrievePic(req.params.coords, req.params.address, function(fsPicPath){
+      if (fsPicPath) {
+        res.json({picturePath: fsPicPath, address: req.params.address});
+      }
+      else {
+        res.send("There was an error loading the photo");
+      }
+    })
+});
+
+router.get("/delete/photo/:coords", function(req, res){
+    loadPhoto.removePic(function(coords){
+        res.json({ok: true, coords: coords});
+    })
+});
+
+router.get("/user/findall", function(req, res) {
+    User.find({}).exec(function(err, result) {
+        if (err) {
+            throw err
+        } else {
+            return res.json(result);
+        }
     });
+});
+
+// Create a new friend.
+router.get("/user/addFriend/:id", function(req, res) {
+    User.findOneAndUpdate({ "_id": req.user._id }, { $push: { "friends": req.params.id } }, function(err, user) {
+        if (err) {
+            console.log(err);
+        } else {
+            return res.json(user);
+        }
+    });
+});
+
+// Code to untag a search.  
+router.get("/search/delete/:id", function(req, res) {
+    var id = req.params.id;
+    // Use the article id to find and delete it's Search
+    User.findOneAndUpdate({ "_id": req.user._id }, { $pull: { "searches": req.params.id } }, function(err, newdoc) {
+        // Send any errors to the browser
+        if (err) {
+            res.send(err);
+        }
+        // Or send the newdoc to the browser
+        else {
+            return res.redirect("/userData");
+        }
+    });
+});
 
 
 
 router.post('/loginUser',
-  passport.authenticate('local', {successRedirect:'/', failureRedirect:'/login?error', failureFlash: true}),
-  function(req, res) {
-	    res.redirect("/");
-  });
+    passport.authenticate('local', { successRedirect: '/', failureRedirect: '/login?error', failureFlash: true }),
+    function(req, res) {
+        res.redirect("/");
+    });
 
-router.get('/logout', function(req, res){
-	req.logout();
-  console.log("You are logged out!!!!!!!!!!");
-	req.flash('success_msg', 'You are logged out');
+router.get('/logout', function(req, res) {
+    req.logout();
+    req.flash('success_msg', 'You are logged out');
 
-	res.redirect('/login');
+    res.redirect('/login');
 });
 
 module.exports = router;

@@ -13,7 +13,6 @@ var Main = React.createClass({
   // Here we set a generic state associated with the username and pword fields
   // Note how we added in that history state variable
   getInitialState: function() {
-    console.log("thing!!!!!!!!!!!!")
     return {_id: "", email: "", searches: "", username: "", popSearches:[]};
 
   },
@@ -26,13 +25,11 @@ var Main = React.createClass({
         var searches = userdata.data.searches;
         var username = userdata.data.username;
         that.setState({_id: id, email:email, searches:searches, username: username});
-        console.log(that.state);
       });
 
       helpers.getSearches().then(function(searchData){
-        console.log(searchData);
         that.setState({popSearches: searchData.data})
-      });
+      });    
   },
    // If the component changes (i.e. if a search is entered)...
 
@@ -45,25 +42,24 @@ var Main = React.createClass({
       window.location.replace("google.html");
   },
 
-  handleSubmit: function() {
+  handleSubmit: function(event) {
      event.preventDefault();
      var that = this;
     // Run the query for the address
     helpers.runQuery(that.state.searchTerm).then(function(data) {
       if (data !== that.state.results) {
-        console.log("Address", data);
-        console.log(data.formatted);
         that.setState({ resultsAddress: data.formatted, resultsCoords: data.geometry});
         sessionStorage.setItem("lat", that.state.resultsCoords.lat);
         sessionStorage.setItem("lng", that.state.resultsCoords.lng);
-        console.log(that.state._id, that.state.resultsAddress);
+        console.log(data);
         // After we've received the result... then post the search term to our searches.
-        helpers.postSearchQuery(that.state.resultsAddress).then(function(response) {
-          console.log("Updated!");
-          that.setState({searches: response.data.searches });         // After we've done the post... then get the updated searches
-          helpers.getSearches().then(function(searchData){
-            console.log(searchData);
-            that.setState({popSearches: searchData.data})
+        helpers.postSearchQuery(data.formatted).then(function(result) {
+        console.log("post search running@@@@@"); 
+        console.log(result);         
+          that.setState({searches: result.data.searches});
+          helpers.getSearches().then(function(data) {
+            
+            that.setState({popSearches: data.data.searches});
           });
         });
       }
@@ -72,11 +68,7 @@ var Main = React.createClass({
 
   handleDelete: function (event) {
     var that = this;
-    console.log("Clicked delete!!!!!");
-    console.log(event.target.value);
-    console.log(that.state._id);
     helpers.deleteSearch(event.target.value, that.state._id).then(function(response){
-        console.log(response);      
         that.setState({searches: response.data.searches });
     });
   },

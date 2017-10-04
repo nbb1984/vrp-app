@@ -10,11 +10,10 @@ var flash = require("connect-flash");
 var session = require("express-session");
 var passport = require("passport");
 var LocalStrategy = require("passport-local").Strategy;
-// Create Instance of Express
-var app = express();
-
 var users = require("./routes/users");
 var routes = require("./routes/index");
+// Create Instance of Express
+var app = express();
 // Require History Schema
 var User = require("./models/user");
 // Sets an initial port. We'll use this later in our listener
@@ -38,6 +37,7 @@ db.on("error", function(err) {
 db.once("open", function() {
   console.log("Mongoose connection successful.");
 });
+
 
 // Express Session
 app.use(session({
@@ -84,26 +84,17 @@ app.use(function (req, res, next) {
 console.log("server js ran");
 
 app.get("/register", function(req, res) {
-  console.log("go to registration");
   res.sendFile(__dirname + "/public/registration.html");
 });
 
 app.get("/login?success", function(req, res) {
-  console.log("anything happen?");
-  console.log(__dirname);
   res.sendFile(__dirname + "/public/login.html");
 });
 
 app.get("/login", function(req, res) {
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  console.log(__dirname + "/public/login.html");
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   res.sendFile(__dirname + "/public/login.html");
 });
 app.get("/user", function(req, res) {
-  console.log("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-  console.log(__dirname + "/public/index2.html");
-  console.log('!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!');
   res.sendFile(__dirname + "/public/index2.html");
 });
 
