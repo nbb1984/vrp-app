@@ -1,23 +1,69 @@
 /* global AFRAME */
-
+var axios = require("axios");
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
  */
-AFRAME.registerComponent('cat-row', {
+AFRAME.registerComponent('category-nav', {
 	schema: {
 		/*on: {type: 'string'},
 		imgDir: {type: 'string'}*/
-		cat: {type: 'string'}
+		initialCategory: {type: 'string', default: 'mural'}
 	},
 
 	init: function () {
 		var data = this.data;
 		var el = this.el;
 
+		axios.get(window.location.origin + '/compDetails/explore')
+			.then((response) => {
+				console.log(response);
+				var details = response.data.details;
+				var exclude = response.data.exclude;
+				exclude.push('element');
+				exclude.push('events');
+				for (var i = 0; i < details.length; i++) {
+					var newEl = document.createElement(details[i].element);
+					for (var prop in details[i]) {
+						if (!exclude.includes(prop)) {
+							newEl.setAttribute(prop, details[i][prop])
+						}
+					}
+					// should tie this into the url to extract the present page
+					if (data.initialCategory === details[i]["data-cat"]) {
+						newEl.addEventListener('displayNewScene', function (event) {
+							console.log('displayNewScene set initial category');
+							console.log(event.target.components.position['attrValue']);
 
-		this.buildAndAttach();
-		this.buildDisplay(true, 'mural');
+
+							//var selected = event.target.getAttribute('position');
+							var selected = event.target.components.position['attrValue'];
+							console.log(selected);
+							var position = {
+								x: selected.x,
+								y: selected.y,
+								z: selected.z - 0.02
+							};
+							var highlighter = document.querySelector('a-ring#catHighlighter');
+							highlighter.setAttribute('position', position);
+						});
+					}
+					newEl.addEventListener("click", this.selectorMove);
+					el.appendChild(newEl);
+					if (details[i].element === 'a-ring') {
+						var setSelected = document.querySelector('a-image[data-cat=' + data.initialCategory + ']');
+						if(setSelected){
+							setSelected.emit('displayNewScene');
+						}
+
+					}
+				}
+				el.flushToDOM(true);
+
+
+			});
+		//	this.buildAndAttach();
+		//	this.buildDisplay(true, 'mural');
 		var skySphere = document.querySelector('a-sky');
 		skySphere.setAttribute('animation__fade', {
 			property: 'material.color',
@@ -29,10 +75,25 @@ AFRAME.registerComponent('cat-row', {
 		});
 
 	},
+	selectorMove: function (event) {
+		var categorySelected = event.detail.target.getAttribute('data-cat');
+		console.log(categorySelected);
+		var selected = event.detail.target.getAttribute('position');
+		event.detail.target.emit('displayNewScene', {newScene: categorySelected}, true);
+		var position = {
+			x: selected.x,
+			y: selected.y,
+			z: selected.z - 0.02
+		};
+		var highlighter = document.querySelector('a-ring#catHighlighter');
+		highlighter.setAttribute('position', position);
+		var collection = document.querySelector('a-entity#collection-root');
+		collection.setAttribute('collection-panels', {collection: categorySelected, initial: false})
+	},
 
-	/**
+	/*/!**
 	 * Setup fade-in + fade-out.
-	 */
+	 *!/
 	buildAndAttach: function () {
 		var data = this.data;
 		var el = this.el;
@@ -52,8 +113,8 @@ AFRAME.registerComponent('cat-row', {
 
 		for (var i = 0; i < btns.length; i++) {
 			var newEl = document.createElement('a-image');
-			newEl.setAttribute('src', basePath + btns[i].file);
-			newEl.setAttribute("position", btns[i].position);
+			//newEl.setAttribute('src', basePath + btns[i].file);
+			//newEl.setAttribute("position", btns[i].position);
 			newEl.setAttribute('data-page', i);
 			newEl.setAttribute('data-category', btns[i].cat);
 			newEl.setAttribute("class", btns[i].class);
@@ -108,7 +169,7 @@ AFRAME.registerComponent('cat-row', {
 		{x: -2.22, y: -.38, z: -3.65},
 		{x: -2.22, y: -.38, z: -3.65},
 		{x: -2.22, y: -.38, z: -3.65},
-	],
+	],*/
 	/*
 	// 0
 	// 1 3
@@ -198,7 +259,7 @@ AFRAME.registerComponent('cat-row', {
 					pic.setAttribute('width', 1);
 					pic.setAttribute('height', 0.5);
 					pic.setAttribute('rotation', "-10 0 0");
-					$(pic).on('click', function(){
+					$(pic).on('click', function () {
 						var sky = document.querySelector('a-sky');
 						sky.emit('set-image-fade');
 						var thumbSrc = $(this).attr('src');
@@ -216,8 +277,8 @@ AFRAME.registerComponent('cat-row', {
 						var sky = document.querySelector('a-sky');
 						pic.getAttribute()
 					})*/
-					if(initial) pic.setAttribute('position', finalPosition);
-					if(!initial){
+					if (initial) pic.setAttribute('position', finalPosition);
+					if (!initial) {
 						pic.setAttribute('animation__enter', {
 							property: "position",
 							easing: "easeOutCubic",
@@ -242,7 +303,7 @@ AFRAME.registerComponent('cat-row', {
 					scene.appendChild(pic);
 				}
 				if (!initial) {
-					setTimeout(()=>{
+					setTimeout(() => {
 						var current = document.querySelectorAll('a-image[data-marked=removal]');
 						if (current) {
 							for (var j = 0; j < current.length; j++) {
@@ -266,3 +327,11 @@ AFRAME.registerComponent('cat-row', {
 
 	}
 });
+
+
+/*
+//
+for(var thing in event.target.components.position){
+	console.log(thing);
+}
+ */

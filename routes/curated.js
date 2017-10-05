@@ -6,6 +6,7 @@ var app = express();
 var CuratedContent = require('../models/curated');
 var axios = require("axios");
 var path = require("path");
+var fs = require('fs');
 var geocode = require("./geocode.js");
 var loadPhoto = require("./fileRetrieve.js");
 var Readable = require('stream').Readable;
@@ -20,6 +21,48 @@ router.get('/geoSearch/All', (req, res) => {
 			res.json(response);
 		})
 });
+
+router.get('/geoSearch/Favorites', (req, res) =>{
+	res.json({
+		"_id": "59ca9e313090c5265896900f",
+		"email": "billy@thing.com",
+		"username": "billybob",
+		"password": "$2a$10$9U.MOmGeA2s2llR836BL5OaAfKy2Rw3ViUTvcrqP/0LIPNGt5eG7q",
+		"__v": 0,
+		"friends": [
+		{
+			"_id": "59ca9e053090c5265896900e",
+			"email": "nickbole@thing.com",
+			"username": "nickbole",
+			"password": "$2a$10$rvKdPyOdbx2V6PuD.4C1FO4gJe3Uw6jnKt8FsBAjvDZxVwKzHrvdy",
+			"__v": 0,
+			"friends": [],
+			"searches": [
+				"59ca9fcde93d9838c8859219",
+				"59cad7501c726213c0747acd",
+				"59cad7ed1c726213c0747ace",
+				"59cae49455a96639802111bd",
+				"59cae66964415823b863761a",]
+		}
+	],
+		"searches": [
+		"59ca9fcde93d9838c8859219",
+		"59cad7501c726213c0747acd",
+		"59cad7ed1c726213c0747ace",
+		"59cae49455a96639802111bd",
+		"59cae66964415823b863761a",
+		{
+			"_id": "59cc221f2c339b2338ee119b",
+			"query": "Wellington, Wellington City, New Zealand",
+			"hits": 3,
+			"__v": 0,
+			"date": "2017-09-27T22:11:43.113Z"
+		}
+	]
+	});
+});
+
+
 
 router.get('/geoSearch/Categories/:cat', (req, res) =>{
 	console.log('category', req.params.cat);

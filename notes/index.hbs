@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Virtual Reality Passport search {{location}}</title>
+  <title>The Virtual Reality Passport search </title>
   <meta name="description" content="Aframe-Material">
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
@@ -19,14 +19,48 @@
   <script type="text/javascript">
 	  AFRAME.ASSETS_PATH = "./assets";
   </script>
+  <style>
+    #map{
+      width: 300px;
+      height: 200px;
+      z-index: 100;
+      -webkit-box-shadow: 0px 0px 3px 3px rgba( 73, 73, 73, .2 );
+      -moz-box-shadow: 0px 0px 3px 3px rgba( 73, 73, 73, .2 );
+      -o-box-shadow: 0px 0px 3px 3px rgba( 73, 73, 73, .2 );
+      box-shadow: 0px 0px 3px 3px rgba( 73, 73, 73, .2 );
+    }
+  </style>
 </head>
 <body>
+<script type="x-shader/x-vertex" id="vs-sphere">
+
+varying vec2 vUv;
+
+void main() {
+
+	vUv = vec2( 1. - uv.x, uv.y );
+	vec4 mPosition = modelMatrix * vec4( position, 1.0 );
+	gl_Position = projectionMatrix * modelViewMatrix * mPosition;
+
+}
+
+</script>
+
+<script type="x-shader/x-fragment" id="fs-sphere">
+
+uniform sampler2D map;
+varying vec2 vUv;
+
+void main() {
+
+	gl_FragColor = vec4( texture2D( map, vUv ).rgb, 1. );
+
+}
+
+</script>
 <a-scene>
 
-<!--  <a-assets>
-    <a-mixin id="discover" discover-search></a-mixin>
-    <a-mixin id="login" login-fields></a-mixin>
-  </a-assets>-->
+
   <a-entity laser-controls="hand: right"></a-entity>
 
   <a-entity id="camera" camera="" look-controls="" mouse-cursor="">
@@ -47,7 +81,7 @@
 
 
   <!-- bottom nav row -->
-  <a-entity nav="initialSelected: explore;"></a-entity>
+  <a-entity id="nav-attach" nav="initialSelected: {{location}}"></a-entity>
 
 
 
@@ -57,7 +91,23 @@
 
   <!-- END ENVIRONEMENT -->
 </a-scene>
+<div id="map"></div>
+
+<div class="block">
+  <form id="map_form">
+    <input type="text" name="address" id="address" />
+    <button type="submit" class="primary button" id="searchButton" >Search</button>
+  </form>
+</div>
 <script>
+  window.addEventListener('popstate', function(e) {
+    //var character = e.state;
+    console.log('state: ',e.state);
+    var contentToDisplay = document.querySelector('a-image[data-page='+ e.state +']');
+    if(contentToDisplay){
+    	contentToDisplay.emit('click');
+    }
+  });
   console.log(AFRAME);
   var sne = document.querySelector('a-scene');
   sne.addEventListener('displayNewScene', function(){

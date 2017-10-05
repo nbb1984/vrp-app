@@ -15,7 +15,7 @@ var loadPhoto = require("./fileRetrieve.js");
 module.exports = router;
 
 // Code for getting the popular search data.
-router.get("/searches", function(req, res) {
+router.get("/EverySearch", function(req, res) {
 
 	Search.find({}).sort([
 			["hits", "descending"]
@@ -31,7 +31,7 @@ router.get("/searches", function(req, res) {
 		});
 });
 // Create a new Search or replace an existing Search
-router.post("/user/search", function(req, res) {
+router.post("/search", function(req, res) {
 	try{
 	if(req.user){
 		geocode.getCoordsAndAddress(req.body.query, function(result) {

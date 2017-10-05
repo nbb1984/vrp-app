@@ -16,16 +16,27 @@ var axios = require('axios');
 // Create Instance of Express
 var app = express();
 
+var exphbs = require('express-handlebars');
+
 
 var users = require("./routes/users");
 var routes = require("./routes/index");
 var content = require("./routes/content");
 var searches = require('./routes/searchRoutes');
 var curated = require('./routes/curated');
+var pageDetails = require('./routes/pageDetails');
 // Require History Schema
 var User = require("./models/user");
 // Sets an initial port. We'll use this later in our listener
 var PORT = process.env.PORT || 9000;
+
+app.set('views', './public');
+app.engine('hbs', exphbs({
+	//defaultLayout: 'main',
+	extname: '.hbs'
+}));
+app.set('view engine', '.hbs');
+
 // Run Morgan for Logging
 app.use(logger("dev"));
 app.use(bodyParser.json());
@@ -100,6 +111,7 @@ app.use('/', searches);
 app.use('/', curated);
 app.use('/', users);
 app.use('/', content);
+app.use('/', pageDetails);
 
 // -------------------------------------------------
 // Listener

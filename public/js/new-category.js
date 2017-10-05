@@ -4,7 +4,7 @@
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
  */
-AFRAME.registerComponent('cat-row', {
+AFRAME.registerComponent('categories', {
 	schema: {
 		/*on: {type: 'string'},
 		imgDir: {type: 'string'}*/
@@ -264,5 +264,18 @@ AFRAME.registerComponent('cat-row', {
 				console.log('http request error: ', err);
 			})
 
+	}
+});
+
+
+//categories
+
+
+AFRAME.registerPrimitive('a-categories', {
+	defaultComponents:{
+		categories: {}
+	},
+	mappings: {
+		cat: 'categories.cat'
 	}
 });

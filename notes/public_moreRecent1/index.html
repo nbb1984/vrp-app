@@ -2,20 +2,18 @@
 <html>
 <head>
   <meta charset="utf-8">
-  <title>The Virtual Reality Passport search {{location}}</title>
+  <title>The Virtual Reality Passport search</title>
   <meta name="description" content="Aframe-Material">
   <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
   <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
-  <script src="https://unpkg.com/aframe-animation-component@3.2.5/dist/aframe-animation-component.min.js"></script>
- <!-- <script src="https://cdn.rawgit.com/etiennepinchon/aframe-material/master/dist/aframe-material.min.js"></script>-->
-  <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
 
-  <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"
-          integrity="sha256-IyWBFJYclFY8Pn32bwWdSHmV4B9M5mby5bhPHEmeY8w=" crossorigin="anonymous"></script>
+  <script src="https://cdn.rawgit.com/etiennepinchon/aframe-material/master/dist/aframe-material.min.js"></script>
+  <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+  <script src="js/nav-row.js"></script>
   <script src="js/manhole.js"></script>
-  <!--<script src="js/discoverSearch.js"></script>-->
-  <script src="js/vpp-app.js"></script>
+  <script src="js/discoverSearch.js"></script>
+  <script src="js/loginFields.js"></script>
   <script type="text/javascript">
 	  AFRAME.ASSETS_PATH = "./assets";
   </script>
@@ -41,13 +39,19 @@
 
   </a-entity>
 
+  <!-- BEGIN INPUTS/KEYBOARD -->
+  <a-keyboard  position="-1.724 -2.751 -2.52" scale="2.5 2.5 2.5" rotation="-40 0 0"></a-keyboard>
+
+  <!-- search -->
+ <a-entity discover-search></a-entity>
+ <!-- <a-entity id="attach" mixin="discover"></a-entity>-->
 
   <a-entity manhole></a-entity>
 
 
 
   <!-- bottom nav row -->
-  <a-entity nav="initialSelected: explore;"></a-entity>
+  <a-entity nav-row="page: search;"></a-entity>
 
 
 
@@ -57,15 +61,15 @@
 
   <!-- END ENVIRONEMENT -->
 </a-scene>
-<script>
-  console.log(AFRAME);
-  var sne = document.querySelector('a-scene');
-  sne.addEventListener('displayNewScene', function(){
-  	console.log('displayNewScene event emitted');
-  });
-  sne.addEventListener('removal', function(){
-	  console.log('removal event emitted');
-  })
+<script type="text/javascript">
+	let button = document.querySelector('a-button');
+	let toast = document.querySelector('a-toast');
+	toast.addEventListener('actionclick', ()=>{
+		toast.hide();
+	})
+	button.addEventListener('click', ()=> {
+		toast.show();
+	})
 </script>
 </body>
 </html>
