@@ -166,6 +166,10 @@ AFRAME.registerComponent('nav', {
 
 	buildProfilePage: function(){
 		var root = this.buildBase();
+		var profile = document.createElement('a-entity');
+		profile.setAttribute('map-overlay', 'nothing: nothing;');
+		root.appendChild(profile);
+		this.el.sceneEl.appendChild(root);
 	},
 
 	buildAddNote: function(){

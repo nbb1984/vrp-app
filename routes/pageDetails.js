@@ -282,7 +282,16 @@ router.get('/compDetails/:comp', (req, res) => {
 						color: "white",
 						position: {x: 0.337, y: -1.075, z: -2.944},
 						scale: {x: 0.8, y: 0.8, z: 0.8}
-					}]
+					},
+					/*{
+						item: "mapBtn",
+						element: 'a-button',
+						class: 'clickable',
+						value: 'show map',
+						color: 'white',
+						position: {x: 0.337, y: 0.075, z: -2.944},
+						scale: {x: 2.0, y: 0.5, z: 0.8}
+					}*/]
 			});
 			break;
 		case 'login':

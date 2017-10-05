@@ -24,3 +24,11 @@ module.exports.getCoordsAndAddress = function(search, callback) {
             });
         });
 }
+
+
+// USE SOMETHING LIKE OPEN CAGE DATA TO GET ADDRESS FROM LAT & LNG
+/*
+
+module.exports.getAddressFromCoords = function(lat, lng, callback){
+
+}*/

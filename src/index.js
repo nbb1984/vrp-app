@@ -10,4 +10,6 @@
 	require('./help-menu');
 	require("../lib/aframe-material.js");
 
+
+	require('./embededMap');
 })();
