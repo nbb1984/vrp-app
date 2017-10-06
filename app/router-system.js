@@ -26,8 +26,8 @@ AFRAME.registerSystem('router', {
 				this.data.navController.emit('initialPage', {page: this.resolveSubPages(hash)});
 				//this.navigate(hash);
 			} else {
-				this.data.routerEl.emit('initialPage', {page: 'login'});
-				this.data.navController.emit('initialPage', {page: this.resolveSubPages('login')});
+				this.data.routerEl.emit('initialPage', {page: 'search'});
+				this.data.navController.emit('initialPage', {page: this.resolveSubPages('search')});
 			}
 
 		}

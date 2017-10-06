@@ -130,7 +130,7 @@ AFRAME.registerComponent('router', {
 	buildProfilePage: function () {
 		var root = this.buildBase();
 		var profile = document.createElement('a-entity');
-		profile.setAttribute('map-overlay', 'nothing: nothing;');
+		profile.setAttribute('user-profile', 'nothing: nothing;');
 		root.appendChild(profile);
 		this.el.appendChild(root);
 	},

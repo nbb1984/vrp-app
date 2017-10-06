@@ -16,6 +16,7 @@
 	require('./login');
 	require('./search');
 	require('./help-menu');
+	require('./user-profile');
 	require("../lib/aframe-material.js");
 
 

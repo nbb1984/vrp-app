@@ -120,7 +120,7 @@ router.get("/userData", function(req, res) {
   console.log(id);
   User.findOne({ "_id": req.user._id })
     // ..and populate all of the Searchs associated with it
-    .populate("searches") 
+    .populate({path: "searches", select: 'address', options: { limit: 5, sort: { hits: -1 } }})
     .populate("friends")
     // now, execute our query
     .exec(function(error, doc) {

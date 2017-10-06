@@ -14,10 +14,10 @@ AFRAME.registerComponent('map-overlay', {
 	init: function () {
 		var data = this.data;
 		var el = this.el;
-		//var html = document.createElement('div');
-		//html.setAttribute('id', 'embeddedMap');
+		var html = document.createElement('div');
+		html.setAttribute('id', 'embeddedMap');
 		//html.setAttribute('style', 'position: absolute; top: 0; right: 0; height: 200px; width: 200px;');
-		el.setAttribute('style', 'position: absolute;' +
+		html.setAttribute('style', 'position: absolute;' +
 			'margin: 10px;'+
 			' top: 0; ' +
 			'right: 0; '
@@ -28,9 +28,9 @@ AFRAME.registerComponent('map-overlay', {
 		);
 		var map = document.createElement('div');
 		map.setAttribute('id', 'map');
-		el.appendChild(map);
-		//var attach = document.querySelector('body');
-		//attach.appendChild(html);
+		html.appendChild(map);
+		var attach = document.querySelector('body');
+		attach.appendChild(html);
 		this.initialize();
 		console.log(AFRAME);
 
