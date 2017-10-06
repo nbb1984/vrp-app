@@ -1,6 +1,15 @@
 /* global AFRAME */
 var axios = require("axios");
 var GSVPANO = require('../lib/GSVPano');
+
+
+
+
+
+var axiosConfig = {
+	baseUrl: window.location.origin
+};
+
 /**
  * GOOGLE MAP WILL ONLY SHOW IF THE URL IS NOT A HASH URL.
  * A STREET VIEW IMAGE WILL ONLY BE FOUND IF THE COORDINATES USED LIE ON A STREET (OR AT LEAST VERY VERY CLOSE [I THINK])
@@ -12,10 +21,11 @@ AFRAME.registerComponent('search', {
 	},
 
 	init: function () {
+		console.log(axiosConfig);
 		var data = this.data;
 		var el = this.el;
 
-		axios.get(window.location.origin + '/compDetails/search')
+		axios.get('/compDetails/search', axiosConfig)
 			.then((response) => {
 				var details = response.data.details;
 				var exclude = response.data.exclude;
@@ -140,24 +150,21 @@ AFRAME.registerComponent('search', {
 
 
 	runQueryBackEnd: function (location) {
-		var errorMsg = document.querySelector('a-entity#errorMsg');
-		if(errorMsg){
-			errorMsg.parentNode.removeChild(errorMsg);
-		};
+		this.removeErrorMsg();
 		console.log(location);
-		return axios.post(window.location.origin + '/search', {query: location})
+		return axios.post('/search', {query: location}, axiosConfig)
 			.then((response) => {
 				console.log(response);
 				if(response.data.ok){
 					this.getPic(response.data.details.lat, response.data.details.lng);
-				} else {
+				} /*else {
 					if(_.has(response, 'data.err')){
 						console.log('error during search or search save');
 					}
 					if(_.has(response, 'data.userError')){
 						console.log('not logged in');
 					}
-				}
+				}*/
 
 
 
@@ -171,7 +178,11 @@ AFRAME.registerComponent('search', {
 					.catch(err => {
 						console.log(err);
 					})*/
-			});
+			})
+			.catch(err =>{
+				console.log(err);
+				this.errorMsg(err);
+			})
 
 	},
 
@@ -186,7 +197,7 @@ AFRAME.registerComponent('search', {
 			});
 		var baseUrl = window.location.origin;
 		var queryUrl = baseUrl + '/search-save';
-		return axios.post(queryUrl, {query: location}).then((response) => {
+		return axios.post('/search-save', {query: location}, axiosConfig).then((response) => {
 			console.log(response);
 			var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
 			axios.get(getImage)
@@ -245,6 +256,7 @@ AFRAME.registerComponent('search', {
 				console.log(data);
 				var newImage = data.toDataURL();
 				console.log("LOADED:", data);
+				this.removeErrorMsg();
 				this.showPic(newImage, lat, lng);
 			} catch (err) {
 				console.log(err);
@@ -265,6 +277,10 @@ AFRAME.registerComponent('search', {
 	},
 
 	errorMsg: function (errorMessage) {
+		var priorError = document.querySelector('a-entity#errorMsg');
+		if(priorError){
+			priorError.parentNode.removeChild(priorError);
+		}
 		var messageContainer = document.createElement('a-entity');
 		messageContainer.setAttribute('id', 'errorMsg');
 
@@ -274,11 +290,18 @@ AFRAME.registerComponent('search', {
 		msgPlane.setAttribute('geometry', "primitive: plane; height: auto; width: 5");
 		msgPlane.setAttribute('material', "color: red; transparent: true; opacity: 0.4");
 		msgPlane.setAttribute('text', "value:" + errorMessage + "; color: white");
-		msgPlane.setAttribute('position', {x: 7, y: 0, z: -4});
-		msgPlane.setAttribute('rotation', {x: 0, y: -30, z: 0});
+		msgPlane.setAttribute('position', {x: -7, y: 0, z: -4});
+		msgPlane.setAttribute('rotation', {x: 0, y: 30, z: 0});
 		messageContainer.appendChild(msgPlane);
 
 		this.el.appendChild(messageContainer);
+	},
+
+	removeErrorMsg: function () {
+		var priorError = document.querySelector('a-entity#errorMsg');
+		if(priorError){
+			priorError.parentNode.removeChild(priorError);
+		}
 	},
 
 	showPic: function (newImage, lat, lng) {
@@ -310,16 +333,18 @@ AFRAME.registerComponent('search', {
 	},
 
 	savePic: function () {
+		this.removeErrorMsg();
 		var imageEl = document.querySelector('a-sky');
 		var lat = imageEl.getAttribute('data-lat');
 		var lng = imageEl.getAttribute('data-lng');
 		var image = imageEl.getAttribute('src');
-		axios.post(window.location.origin + '/saveSearchImage', {lat: lat, lng: lng, image: image})
+		axios.post('/saveSearchImage', {lat: lat, lng: lng, image: image}, axiosConfig)
 			.then(response => {
 				console.log(response);
 			})
 			.catch(err => {
 				console.log(err);
+				this.errorMsg(err);
 			})
 	}
 

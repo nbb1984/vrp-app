@@ -56,18 +56,20 @@ router.post("/saveSearchImage", (req, res) => {
 					.exec()
 					.then((newdoc) => {
 						console.log("newdoc coming!!!!!");
-						console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
+						//console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
 						//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
 						res.json({ok: true, doc: newdoc});
 					})
 					.catch(err => {
 						//reject(err);
+						console.log('err', err);
 						res.json({ok: false, err: err});
 					})
 			})
 			.catch(err => {
-				res.json({ok: false});
 				console.log('err', err);
+				res.json({ok: false});
+
 			});
 	} else {
 		res.json({ok: false, userError: "Must be logged in to search.  Check out the curated collections!"})
@@ -136,7 +138,7 @@ function saveInMongo(lat, lng, image) {
 router.get("/searchThumbCoords/:lat/:lng", (req, res) => {
 	/*	var googlePicturePath = "http://maps.googleapis.com/maps/api/streetview?size=600x300&location="  + req.params.lat + ',' + req.params.lng + "%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw";*/
 	var googlePicturePath = "http://maps.googleapis.com/maps/api/streetview?size=600x300&location=" + req.params.lat + ',' + req.params.lng + "%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw";
-	res.json({url: googlePicturePath})
+	res.json({ok: true, url: googlePicturePath})
 });
 
 
@@ -145,7 +147,7 @@ router.post("/search", function (req, res) {
 	if (req.user) {
 		viaLocationQuery(req.body.query, req.user)
 			.then(response => {
-				res.json(response);
+				res.json({ok: true, results: response});
 			})
 			.catch(err => {
 				res.json({ok: false, err: err})
@@ -331,10 +333,10 @@ function newLocation(result, user, googlePicturePath) {
 router.get("/save/photo/:coords/:address", function (req, res) {
 	loadPhoto.retrievePic(req.params.coords, req.params.address, function (fsPicPath) {
 		if (fsPicPath) {
-			res.json({picturePath: fsPicPath, address: req.params.address});
+			res.json({ok: true, picturePath: fsPicPath, address: req.params.address});
 		}
 		else {
-			res.send("There was an error loading the photo");
+			res.json({ok: false, err: "There was an error loading the photo"});
 		}
 	})
 });
@@ -353,7 +355,7 @@ router.get("/search/delete/:id", function (req, res) {
 	User.findOneAndUpdate({"_id": req.user._id}, {$pull: {"searches": req.params.id}}, function (err, newdoc) {
 		// Send any errors to the browser
 		if (err) {
-			res.send(err);
+			res.send({ok: false, err: err});
 		}
 		// Or send the newdoc to the browser
 		else {
