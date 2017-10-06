@@ -47,37 +47,6 @@ router.get('/compDetails/:comp', (req, res) => {
 	var basePath = "assets/ui/";
 	switch (req.params.comp) {
 		case 'nav':
-
-		function selectorBuild(event) {
-			var initialSelected = event.detail.target.parentEl.getAttribute('comp').initialSelected;
-			if (event.detail.target.id === initialSelected) {
-				var selected = event.detail.target.getAttribute('position');
-				var position = {
-					x: selected.x,
-					y: selected.y,
-					z: selected.z - 0.02
-				};
-				var highlighter = document.querySelector('a-ring#selectedhighlighter');
-				highlighter.setAttribute('position', position);
-			}
-		};
-
-		function selectorMove(event) {
-			console.log(event);
-			var selected = event.detail.target.getAttribute('position');
-			event.detail.target.emit('displayNewScene', {newScene: event.detail.target.id}, true);
-			var position = {
-				x: selected.x,
-				y: selected.y,
-				z: selected.z - 0.02
-			};
-			var highlighter = document.querySelector('a-ring#selectedhighlighter');
-			//var priorPage = highlighter.getAttribute('data-current');
-			highlighter.setAttribute('position', position);
-			//highlighter.setAttribute('data-current', btns[indexSelected].comp);
-		}
-
-
 			res.json({
 				exclude: ['page'], details: [
 					{
@@ -86,8 +55,6 @@ router.get('/compDetails/:comp', (req, res) => {
 						element: "a-image",
 						src: basePath + "explore.png",
 						class: "clickable",
-						events: [{trigger: 'click', handler: selectorMove.toString()},
-							{trigger: 'loaded', handler: selectorBuild.toString()}],
 						width: 0.5,
 						height: 0.5,
 						position: {x: -1.6, y: -2, z: -3.8}
@@ -98,8 +65,6 @@ router.get('/compDetails/:comp', (req, res) => {
 						element: "a-image",
 						src: basePath + "help.png",
 						class: "clickable",
-						events: [{trigger: 'click', handler: selectorMove.toString()},
-							{trigger: 'loaded', handler: selectorBuild.toString()}],
 						width: 0.5,
 						height: 0.5,
 						position: {x: 1.6, y: -2, z: -3.8}
@@ -110,8 +75,6 @@ router.get('/compDetails/:comp', (req, res) => {
 						element: "a-image",
 						src: basePath + "search.png",
 						class: "clickable",
-						events: [{trigger: 'click', handler: selectorMove.toString()},
-							{trigger: 'loaded', handler: selectorBuild.toString()}],
 						width: 0.5,
 						height: 0.5,
 						position: {x: -0.8, y: -2, z: -3.8}
@@ -122,8 +85,6 @@ router.get('/compDetails/:comp', (req, res) => {
 						element: "a-image",
 						src: basePath + "Profile.png",
 						class: "clickable",
-						events: [{trigger: 'click', handler: selectorMove.toString()},
-							{trigger: 'loaded', handler: selectorBuild.toString()}],
 						width: 0.5,
 						height: 0.5,
 						position: {x: 0, y: -2, z: -3.8}
@@ -134,8 +95,6 @@ router.get('/compDetails/:comp', (req, res) => {
 						element: "a-image",
 						src: basePath + "myPassport.png",
 						class: "clickable",
-						events: [{trigger: 'click', handler: selectorMove.toString()},
-							{trigger: 'loaded', handler: selectorBuild.toString()}],
 						width: 0.5,
 						height: 0.5,
 						position: {x: .8, y: -2, z: -3.80}
@@ -336,7 +295,7 @@ router.get('/compDetails/:comp', (req, res) => {
 					},
 					{
 						element: "a-button",
-						id: "signupText",
+						id: "signupBtn",
 						class: "clickable",
 						value: "Sign Up",
 						name: "stuff",

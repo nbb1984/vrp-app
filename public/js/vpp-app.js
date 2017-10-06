@@ -54,23 +54,488 @@
 	(()=>{
 		if (!AFRAME) { return console.error('AFRAME is required!'); }
 		if (!AFRAME.ASSETS_PATH) { AFRAME.ASSETS_PATH = "./assets"; }
+	/*	require('aframe');
+		require('aframe-mouse-cursor-component');
+		require('aframe-event-set-component');
+		require('aframe-animation-component');*/
+	
 		__webpack_require__(2);
-		__webpack_require__(30);
-		__webpack_require__(31);
-		__webpack_require__(32);
+		__webpack_require__(3);
+		__webpack_require__(4);
+		__webpack_require__(5);
 		__webpack_require__(33);
 		__webpack_require__(34);
 		__webpack_require__(35);
 		__webpack_require__(36);
+		__webpack_require__(37);
+		__webpack_require__(39);
+		__webpack_require__(40);
 	
+	
+		__webpack_require__(41);
 	})();
 
 /***/ }),
 /* 2 */
+/***/ (function(module, exports) {
+
+	AFRAME.registerSystem('router', {
+		schema: {
+			navController: {type: 'selector'},
+			routerEl: {type: 'selector', default: 'a-router'}
+		},
+		init: function () {
+			window.addEventListener("hashchange", this.emitOnHashChange.bind(this), false);
+			document.addEventListener('readystatechange', this.handleInitialLoad.bind(this));
+		},
+		update: function(){},
+		remove: function(){},
+		tick: function(time, timeDelta){},
+		pause: function(){},
+		play: function(){},
+		updateSchema: function(data){},
+	
+		handleInitialLoad: function(event){
+			var router;
+			if(document.readyState === 'interactive'){
+				var url = event.target.URL;
+				//console.log(url);
+				if(/#/.test(url)){
+					var hash = url.match(/#.*/)[0].replace('#','');
+					//console.log(document.querySelector('a-entity#nav-attach'));
+					this.data.routerEl.emit('initialPage', {page: hash});
+					this.data.navController.emit('initialPage', {page: this.resolveSubPages(hash)});
+					//this.navigate(hash);
+				} else {
+					this.data.routerEl.emit('initialPage', {page: 'login'});
+					this.data.navController.emit('initialPage', {page: this.resolveSubPages('login')});
+				}
+	
+			}
+			//console.log('readystatechange', event);
+			//console.log('document.readyState', document.readyState);
+		},
+	
+		emitOnHashChange: function(event){
+			//console.log('hash event', event);
+			//console.log('hash portion', event.newURL.match(/#.*/)[0].replace('#',''));
+			var hash = event.newURL.match(/#.*/)[0].replace('#','');
+			this.data.currentPage = hash;
+			this.data.routerEl.emit('navigate', {page: hash});
+			//this.data.navController.emit('navigate', {page: this.resolveSubPages('login')});
+			//this.navigate(hash);
+		},
+	
+		resolveSubPages: function(hash){
+			var located = false;
+			var pageMapping = {
+				profile: ['login', 'signup', 'profile']
+			};
+			for(var prop in pageMapping){
+				if(pageMapping[prop].includes(hash)){
+					located = true;
+					return prop;
+				}
+			}
+			if(!located){
+				return hash; // actually should return 404 but... for later
+			}
+		}
+	
+	/*	navigate: function (page) {
+			var priorContent = document.querySelector('a-entity#content-root');
+			if (priorContent) {
+				priorContent.parentNode.removeChild(priorContent);
+			} else {
+				//page = 'explore';
+			}
+			var root, keyboard;
+			switch (page) {
+				case 'explore':
+					this.buildExplorePage();
+					break;
+				case 'profile':
+					var showSignup, loggedIn;
+					var profileIcon = document.querySelector('a-image[data-page=profile]');
+					if(profileIcon){
+						showSignup = profileIcon.is('showSignup');
+						loggedIn = profileIcon.is('loggedIn');
+					}
+					if (loggedIn) {
+						this.buildExplorePage();
+					} else {
+						if (showSignup) {
+							document.querySelector('a-image[data-page=profile]').removeState('showSignup');
+							this.buildSignupPage();
+						} else {
+							this.buildLoginPage();
+						}
+					}
+					break;
+				case 'search':
+					this.buildSearchPage();
+					break;
+				case 'profile-expanded':
+					this.buildProfilePage();
+					break;
+				case 'help':
+					this.buildHelpMenu();
+					break;
+				default:
+					this.build404();
+					break;
+			}
+		},
+	
+		buildExplorePage: function () {
+			var root = this.buildBase();
+			var categories = document.createElement('a-entity');
+			categories.setAttribute('category-nav', 'initialCategory: mural;');
+			root.appendChild(categories);
+			var collection = document.createElement('a-entity');
+			collection.setAttribute('id', 'collection-root');
+			collection.setAttribute('collection-panels', {collection: 'mural', initial: true});
+			root.appendChild(collection);
+			this.el.appendChild(root);
+			root.setAttribute('visible', 'false');
+			setTimeout(() => {
+				root.setAttribute('visible', 'true');
+			}, 1000);
+		},
+	
+		buildSearchPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var search = document.createElement('a-entity');
+			search.setAttribute('search', 'nothing: nothing;');
+			root.appendChild(search);
+			this.el.sceneEl.appendChild(root);
+		},
+	
+		buildSignupPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var signup = document.createElement('a-entity');
+			signup.setAttribute('signup', 'nothing: nothing;');
+			root.appendChild(signup);
+			this.el.appendChild(root);
+		},
+	
+		buildLoginPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var signup = document.createElement('a-entity');
+			signup.setAttribute('login', 'nothing: nothing;');
+			root.appendChild(signup);
+			this.el.appendChild(root);
+		},
+	
+	
+		buildHelpMenu: function(){
+			var root = this.buildBase();
+			root.setAttribute('position', '0 1.5 -4');
+			var helpMenu = document.createElement('a-entity');
+			helpMenu.setAttribute('help-menu','nothing: nothing;');
+			root.appendChild(helpMenu);
+			this.el.appendChild(root);
+		},
+	
+		buildProfilePage: function(){
+			var root = this.buildBase();
+			var profile = document.createElement('a-entity');
+			profile.setAttribute('map-overlay', 'nothing: nothing;');
+			root.appendChild(profile);
+			this.el.appendChild(root);
+		},
+	
+		buildAddNote: function(){
+			var root = this.buildBase();
+		},
+	
+		buildBase: function(){
+			var root = document.createElement('a-entity');
+			root.setAttribute('id', 'content-root');
+			return root;
+		},
+	
+		buildKeyboard: function () {
+			var keyContainer = document.createElement('a-entity');
+			keyContainer.setAttribute('position', "0 -0.5 0");
+			var keyboard = document.createElement('a-keyboard');
+			keyboard.setAttribute('class', "clickable");
+			keyboard.setAttribute('physical-keyboard', "true");
+			keyboard.setAttribute('position', "-1.724 -5.751 -2.52");
+			keyboard.setAttribute('scale', "2.5 2.5 2.5");
+			keyboard.setAttribute('rotation', "-40 0 0");
+			keyContainer.appendChild(keyboard);
+			return keyContainer;
+		},
+	
+		build404: function(){
+			var root = document.createElement('a-entity');
+			root.setAttribute('id', 'content-root');
+			var noFound = document.createElement('a-text');
+			noFound.setAttribute('value', "404. Page Not Found :(");
+			noFound.setAttribute('position', {x: -1.176, y: -0.801, z: -2.944});
+			noFound.setAttribute('text', "height: 10");
+			root.appendChild(noFound);
+			this.el.appendChild(root);
+		}*/
+	});
+
+/***/ }),
+/* 3 */
+/***/ (function(module, exports) {
+
+	AFRAME.registerComponent('router', {
+		schema: {
+			navController: {type: 'selector'}
+		},
+		init: function () {
+			this.el.addEventListener('navigate', this.navigate.bind(this));
+			this.el.addEventListener('initialPage', this.navigate.bind(this))
+		},
+		update: function () {
+			console.log('router component update method', this.system);
+		},
+		remove: function () {
+		},
+		tick: function (time, timeDelta) {
+		},
+		pause: function () {
+		},
+		play: function () {
+		},
+		updateSchema: function (data) {
+		},
+	
+	
+		navigate: function (event) {
+			var page = event.detail.page;
+			var oldContent = this.el.children;
+			if (oldContent.length > 0) {
+				_.forEach(oldContent, (item) => {
+					item.parentNode.removeChild(item);
+				})
+			}
+			console.log('page on: ', page);
+			/*var priorContent = document.querySelector('a-entity#content-root');
+			if (priorContent) {
+				priorContent.parentNode.removeChild(priorContent);
+			} else {
+				//page = 'explore';
+			}*/
+			var root, keyboard;
+			switch (page) {
+				case 'explore':
+					this.buildExplorePage();
+					break;
+				case 'login':
+					this.buildLoginPage();
+					break;
+				case 'signup':
+					this.buildSignupPage();
+					break;
+				case 'profile':
+					var loggedIn;
+					var profileIcon = document.querySelector('a-image[data-page=profile]');
+					if (profileIcon) {
+						loggedIn = profileIcon.is('loggedIn');
+					}
+					if (loggedIn) {
+						this.buildExplorePage();
+					} else {
+						location.hash = 'login';
+					}
+					break;
+				case 'search':
+					this.buildSearchPage();
+					break;
+				case 'profile-expanded':
+					this.buildProfilePage();
+					break;
+				case 'help':
+					this.buildHelpMenu();
+					break;
+				default:
+					this.build404();
+					break;
+			}
+		},
+	
+		buildExplorePage: function () {
+			var root = this.buildBase();
+			var categories = document.createElement('a-entity');
+			categories.setAttribute('category-nav', 'initialCategory: mural;');
+			root.appendChild(categories);
+			var collection = document.createElement('a-entity');
+			collection.setAttribute('id', 'collection-root');
+			collection.setAttribute('collection-panels', {collection: 'mural', initial: true});
+			root.appendChild(collection);
+			this.el.appendChild(root);
+			root.setAttribute('visible', 'false');
+			setTimeout(() => {
+				root.setAttribute('visible', 'true');
+			}, 1000);
+		},
+	
+		buildSearchPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var search = document.createElement('a-entity');
+			search.setAttribute('search', 'nothing: nothing;');
+			root.appendChild(search);
+			this.el.appendChild(root);
+		},
+	
+		buildSignupPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var signup = document.createElement('a-entity');
+			signup.setAttribute('signup', 'nothing: nothing;');
+			root.appendChild(signup);
+			this.el.appendChild(root);
+		},
+	
+		buildLoginPage: function () {
+			var root = this.buildBase();
+			root.appendChild(this.buildKeyboard());
+			var signup = document.createElement('a-entity');
+			signup.setAttribute('login', 'nothing: nothing;');
+			root.appendChild(signup);
+			this.el.appendChild(root);
+		},
+	
+	
+		buildHelpMenu: function () {
+			var root = this.buildBase();
+			root.setAttribute('position', '0 1.5 -4');
+			var helpMenu = document.createElement('a-entity');
+			helpMenu.setAttribute('help-menu', 'nothing: nothing;');
+			root.appendChild(helpMenu);
+			this.el.appendChild(root);
+		},
+	
+		buildProfilePage: function () {
+			var root = this.buildBase();
+			var profile = document.createElement('a-entity');
+			profile.setAttribute('map-overlay', 'nothing: nothing;');
+			root.appendChild(profile);
+			this.el.appendChild(root);
+		},
+	
+		buildAddNote: function () {
+			var root = this.buildBase();
+		},
+	
+		buildBase: function () {
+			var root = document.createElement('a-entity');
+			root.setAttribute('id', 'content-root');
+			return root;
+		},
+	
+		buildKeyboard: function () {
+			var keyContainer = document.createElement('a-entity');
+			keyContainer.setAttribute('position', "0 -0.5 0");
+			var keyboard = document.createElement('a-keyboard');
+			keyboard.setAttribute('class', "clickable");
+			keyboard.setAttribute('physical-keyboard', "true");
+			keyboard.setAttribute('position', "-1.724 -5.751 -2.52");
+			keyboard.setAttribute('scale', "2.5 2.5 2.5");
+			keyboard.setAttribute('rotation', "-40 0 0");
+			keyContainer.appendChild(keyboard);
+			return keyContainer;
+		},
+	
+		build404: function () {
+			var root = document.createElement('a-entity');
+			root.setAttribute('id', 'content-root');
+			var noFound = document.createElement('a-text');
+			noFound.setAttribute('value', "404. Page Not Found :(");
+			noFound.setAttribute('position', {x: -1.176, y: -0.801, z: -2.944});
+			noFound.setAttribute('text', "height: 10");
+			root.appendChild(noFound);
+			this.el.appendChild(root);
+		}
+	});
+	
+	
+	AFRAME.registerPrimitive('a-router', {
+		defaultComponents: {
+			router: {}
+		},
+		mappings: {
+			'navController': 'router.navController'
+			/*'is-open': 'keyboard.isOpen',
+			'physical-keyboard': 'keyboard.physicalKeyboard',*/
+		}
+	});
+
+/***/ }),
+/* 4 */
+/***/ (function(module, exports) {
+
+	/* global AFRAME */
+	
+	/**
+	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
+	 * back in.
+	 */
+	AFRAME.registerComponent('manhole', {
+		schema: {
+			/*on: {type: 'string'},
+			imgDir: {type: 'string'}*/
+			page: {type: 'string'}
+		},
+	
+		init: function () {
+			var data = this.data;
+			var el = this.el;
+	
+	
+			this.buildAndAttach();
+			// el.addEventListener(data.on, function () {
+	
+			el.addEventListener("click", function () {
+				console.log("on click")
+				// Fade out image.
+				/*			data.target.emit('set-image-fade');
+							// Wait for fade to complete.
+							setTimeout(function () {
+								// Set image.
+								data.target.setAttribute('material', 'src', data.src);
+							}, data.dur);*/
+			});
+		},
+	
+		/**
+		 * Setup fade-in + fade-out.
+		 */
+		buildAndAttach: function () {
+			var data = this.data;
+			var el = this.el;
+			var imagePath = "assets/ui/BlackCircle.png";
+	
+			var newEl = document.createElement('a-image');
+			newEl.setAttribute('src', imagePath);
+			newEl.setAttribute("position", {x:0, y:-28, z:0});
+			newEl.setAttribute("scale", {x:30, y:30, z:30});
+			newEl.setAttribute("rotation", {x:-90, y:0, z:0});
+			el.appendChild(newEl);
+	
+		},
+	
+		selectedHighlight: function () {
+	
+		}
+	});
+
+/***/ }),
+/* 5 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -83,6 +548,10 @@
 		init: function () {
 			var data = this.data;
 			var el = this.el;
+			var initialPage;
+			this.el.addEventListener('initialPage', (event) => {
+					initialPage = event.detail.page;
+			});
 			axios.get(window.location.origin + '/compDetails/nav')
 				.then(response => {
 					console.log(response);
@@ -98,8 +567,8 @@
 							}
 						}
 						// should tie this into the url to extract the present page
-						if (data.initialSelected === details[i]["data-page"]) {
-							this.includedPages(data.initialSelected);
+						if (initialPage === details[i]["data-page"]) {
+							//this.includedPages(data.initialSelected);
 							newEl.addEventListener('loaded', function (event) {
 								var selected = event.detail.target.getAttribute('position');
 								var position = {
@@ -123,9 +592,10 @@
 		selectorMove: function (event) {
 			console.log(window.location);
 			var pageSelected = event.detail.target.getAttribute('data-page');
-			history.pushState(pageSelected, null, window.location.origin + '/' + pageSelected);
+			//history.pushState(pageSelected, null, window.location.origin + '/' + pageSelected);
+			location.hash = pageSelected;
 			console.log(pageSelected);
-			this.includedPages(pageSelected);
+			//this.includedPages(pageSelected);
 			var selected = event.detail.target.getAttribute('position');
 			//event.detail.target.emit('displayNewScene', {newScene: pageSelected}, true);
 			var position = {
@@ -137,7 +607,7 @@
 			highlighter.setAttribute('position', position);
 		},
 	
-		includedPages: function (page) {
+		/*includedPages: function (page) {
 			var priorContent = document.querySelector('a-entity#content-root');
 			if (priorContent) {
 				priorContent.parentNode.removeChild(priorContent);
@@ -237,6 +707,10 @@
 	
 		buildProfilePage: function(){
 			var root = this.buildBase();
+			var profile = document.createElement('a-entity');
+			profile.setAttribute('map-overlay', 'nothing: nothing;');
+			root.appendChild(profile);
+			this.el.sceneEl.appendChild(root);
 		},
 	
 		buildAddNote: function(){
@@ -271,26 +745,26 @@
 			noFound.setAttribute('text', "height: 10");
 			root.appendChild(noFound);
 			this.el.sceneEl.appendChild(root);
-		}
+		}*/
 	
 	});
 
 /***/ }),
-/* 3 */
+/* 6 */
 /***/ (function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(4);
+	module.exports = __webpack_require__(7);
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
-	var bind = __webpack_require__(6);
-	var Axios = __webpack_require__(8);
-	var defaults = __webpack_require__(9);
+	var utils = __webpack_require__(8);
+	var bind = __webpack_require__(9);
+	var Axios = __webpack_require__(11);
+	var defaults = __webpack_require__(12);
 	
 	/**
 	 * Create an instance of Axios
@@ -323,15 +797,15 @@
 	};
 	
 	// Expose Cancel & CancelToken
-	axios.Cancel = __webpack_require__(27);
-	axios.CancelToken = __webpack_require__(28);
-	axios.isCancel = __webpack_require__(24);
+	axios.Cancel = __webpack_require__(30);
+	axios.CancelToken = __webpack_require__(31);
+	axios.isCancel = __webpack_require__(27);
 	
 	// Expose all/spread
 	axios.all = function all(promises) {
 	  return Promise.all(promises);
 	};
-	axios.spread = __webpack_require__(29);
+	axios.spread = __webpack_require__(32);
 	
 	module.exports = axios;
 	
@@ -340,13 +814,13 @@
 
 
 /***/ }),
-/* 5 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var bind = __webpack_require__(6);
-	var isBuffer = __webpack_require__(7);
+	var bind = __webpack_require__(9);
+	var isBuffer = __webpack_require__(10);
 	
 	/*global toString:true*/
 	
@@ -649,7 +1123,7 @@
 
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -666,7 +1140,7 @@
 
 
 /***/ }),
-/* 7 */
+/* 10 */
 /***/ (function(module, exports) {
 
 	/*!
@@ -693,17 +1167,17 @@
 
 
 /***/ }),
-/* 8 */
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var defaults = __webpack_require__(9);
-	var utils = __webpack_require__(5);
-	var InterceptorManager = __webpack_require__(21);
-	var dispatchRequest = __webpack_require__(22);
-	var isAbsoluteURL = __webpack_require__(25);
-	var combineURLs = __webpack_require__(26);
+	var defaults = __webpack_require__(12);
+	var utils = __webpack_require__(8);
+	var InterceptorManager = __webpack_require__(24);
+	var dispatchRequest = __webpack_require__(25);
+	var isAbsoluteURL = __webpack_require__(28);
+	var combineURLs = __webpack_require__(29);
 	
 	/**
 	 * Create a new instance of Axios
@@ -785,13 +1259,13 @@
 
 
 /***/ }),
-/* 9 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {'use strict';
 	
-	var utils = __webpack_require__(5);
-	var normalizeHeaderName = __webpack_require__(11);
+	var utils = __webpack_require__(8);
+	var normalizeHeaderName = __webpack_require__(14);
 	
 	var DEFAULT_CONTENT_TYPE = {
 	  'Content-Type': 'application/x-www-form-urlencoded'
@@ -807,10 +1281,10 @@
 	  var adapter;
 	  if (typeof XMLHttpRequest !== 'undefined') {
 	    // For browsers use XHR adapter
-	    adapter = __webpack_require__(12);
+	    adapter = __webpack_require__(15);
 	  } else if (typeof process !== 'undefined') {
 	    // For node use HTTP adapter
-	    adapter = __webpack_require__(12);
+	    adapter = __webpack_require__(15);
 	  }
 	  return adapter;
 	}
@@ -881,10 +1355,10 @@
 	
 	module.exports = defaults;
 	
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(10)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(13)))
 
 /***/ }),
-/* 10 */
+/* 13 */
 /***/ (function(module, exports) {
 
 	// shim for using process in browser
@@ -1074,12 +1548,12 @@
 
 
 /***/ }),
-/* 11 */
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	module.exports = function normalizeHeaderName(headers, normalizedName) {
 	  utils.forEach(headers, function processHeader(value, name) {
@@ -1092,18 +1566,18 @@
 
 
 /***/ }),
-/* 12 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
-	var settle = __webpack_require__(13);
-	var buildURL = __webpack_require__(16);
-	var parseHeaders = __webpack_require__(17);
-	var isURLSameOrigin = __webpack_require__(18);
-	var createError = __webpack_require__(14);
-	var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(19);
+	var utils = __webpack_require__(8);
+	var settle = __webpack_require__(16);
+	var buildURL = __webpack_require__(19);
+	var parseHeaders = __webpack_require__(20);
+	var isURLSameOrigin = __webpack_require__(21);
+	var createError = __webpack_require__(17);
+	var btoa = (typeof window !== 'undefined' && window.btoa && window.btoa.bind(window)) || __webpack_require__(22);
 	
 	module.exports = function xhrAdapter(config) {
 	  return new Promise(function dispatchXhrRequest(resolve, reject) {
@@ -1200,7 +1674,7 @@
 	    // This is only done if running in a standard browser environment.
 	    // Specifically not if we're in a web worker, or react-native.
 	    if (utils.isStandardBrowserEnv()) {
-	      var cookies = __webpack_require__(20);
+	      var cookies = __webpack_require__(23);
 	
 	      // Add xsrf header
 	      var xsrfValue = (config.withCredentials || isURLSameOrigin(config.url)) && config.xsrfCookieName ?
@@ -1278,12 +1752,12 @@
 
 
 /***/ }),
-/* 13 */
+/* 16 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var createError = __webpack_require__(14);
+	var createError = __webpack_require__(17);
 	
 	/**
 	 * Resolve or reject a Promise based on response status.
@@ -1310,12 +1784,12 @@
 
 
 /***/ }),
-/* 14 */
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var enhanceError = __webpack_require__(15);
+	var enhanceError = __webpack_require__(18);
 	
 	/**
 	 * Create an Error with the specified message, config, error code, request and response.
@@ -1334,7 +1808,7 @@
 
 
 /***/ }),
-/* 15 */
+/* 18 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1361,12 +1835,12 @@
 
 
 /***/ }),
-/* 16 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	function encode(val) {
 	  return encodeURIComponent(val).
@@ -1435,12 +1909,12 @@
 
 
 /***/ }),
-/* 17 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	/**
 	 * Parse headers into an object
@@ -1478,12 +1952,12 @@
 
 
 /***/ }),
-/* 18 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -1552,7 +2026,7 @@
 
 
 /***/ }),
-/* 19 */
+/* 22 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1594,12 +2068,12 @@
 
 
 /***/ }),
-/* 20 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	module.exports = (
 	  utils.isStandardBrowserEnv() ?
@@ -1653,12 +2127,12 @@
 
 
 /***/ }),
-/* 21 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	function InterceptorManager() {
 	  this.handlers = [];
@@ -1711,15 +2185,15 @@
 
 
 /***/ }),
-/* 22 */
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
-	var transformData = __webpack_require__(23);
-	var isCancel = __webpack_require__(24);
-	var defaults = __webpack_require__(9);
+	var utils = __webpack_require__(8);
+	var transformData = __webpack_require__(26);
+	var isCancel = __webpack_require__(27);
+	var defaults = __webpack_require__(12);
 	
 	/**
 	 * Throws a `Cancel` if cancellation has been requested.
@@ -1796,12 +2270,12 @@
 
 
 /***/ }),
-/* 23 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var utils = __webpack_require__(5);
+	var utils = __webpack_require__(8);
 	
 	/**
 	 * Transform the data for a request or a response
@@ -1822,7 +2296,7 @@
 
 
 /***/ }),
-/* 24 */
+/* 27 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1833,7 +2307,7 @@
 
 
 /***/ }),
-/* 25 */
+/* 28 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1853,7 +2327,7 @@
 
 
 /***/ }),
-/* 26 */
+/* 29 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1873,7 +2347,7 @@
 
 
 /***/ }),
-/* 27 */
+/* 30 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1898,12 +2372,12 @@
 
 
 /***/ }),
-/* 28 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var Cancel = __webpack_require__(27);
+	var Cancel = __webpack_require__(30);
 	
 	/**
 	 * A `CancelToken` is an object that can be used to request cancellation of an operation.
@@ -1961,7 +2435,7 @@
 
 
 /***/ }),
-/* 29 */
+/* 32 */
 /***/ (function(module, exports) {
 
 	'use strict';
@@ -1994,11 +2468,11 @@
 
 
 /***/ }),
-/* 30 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -2336,11 +2810,11 @@
 	 */
 
 /***/ }),
-/* 31 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -2622,11 +3096,11 @@
 
 
 /***/ }),
-/* 32 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -2763,11 +3237,11 @@
 	});
 
 /***/ }),
-/* 33 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -2810,10 +3284,11 @@
 								this.userLogin(userDetails);
 							})
 						}
-						if (details[i].id === 'signupText') {
+						if (details[i].id === 'signupBtn') {
 							newEl.addEventListener('click', (event) => {
-								document.querySelector('a-image[data-page=profile]').addState('showSignup');
-								document.querySelector('a-image[data-page=profile]').emit('click');
+								location.hash = 'signup';
+								//document.querySelector('a-image[data-page=profile]').addState('showSignup');
+								//document.querySelector('a-image[data-page=profile]').emit('click');
 							})
 						}
 						//	{ username: username, password: password }
@@ -2881,8 +3356,10 @@
 									this.errorMsg([{msg: "Incorrect username or password"}])
 								}
 							} else {
+								console.log('login success');
 								document.querySelector('a-image[data-page=profile]').addState('loggedIn');
-								document.querySelector('a-image[data-page=explore]').emit('click');
+								location.hash = 'profile';
+								//document.querySelector('a-image[data-page=explore]').emit('click');
 								//window.location = window.location.origin + "/profile";
 							}
 						}
@@ -2914,11 +3391,13 @@
 	});
 
 /***/ }),
-/* 34 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
+	//var GSVPANO = require('../lib/GSVPano');
+	var GSVPANO = __webpack_require__(42);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -2949,12 +3428,13 @@
 							newEl.addEventListener('click', (event) => {
 								var input = document.querySelector('a-input');
 								var queryTerm = input.value;
-								this.demoRun();
-								//this.getPic();
+								//this.demoRun();
+								this.getPic();
 								/*this.runQuery('liberty bell USA');
 								this.runQueryBackEnd('liberty bell');*/
 								if (queryTerm) {
 									if (queryTerm.length > 0) {
+										this.runQueryBackEnd('liberty bell');
 										//	this.runQuery(queryTerm);
 									}
 								}
@@ -2986,7 +3466,10 @@
 					});
 					var scene = document.querySelector('a-scene');
 					scene.addEventListener('keyboardIsOpen', this.keyboardOpen.bind(this));
-					scene.addEventListener('keyboardIsClosed', this.keyboardClosed.bind(this))
+					scene.addEventListener('keyboardIsClosed', this.keyboardClosed.bind(this));
+					scene.addEventListener('gotLocation', this.mapCoordinates.bind(this));
+	
+					this.showMap();
 				});
 		},
 	
@@ -2994,49 +3477,107 @@
 			var scene = document.querySelector('a-scene');
 			scene.removeEventListener('keyboardIsOpen', this.keyboardOpen.bind(this));
 			scene.removeEventListener('keyboardIsClosed', this.keyboardClosed.bind(this));
+			scene.removeEventListener('gotLocation', this.mapCoordinates.bind(this));
 		},
 	
 		keyboardOpen: function(){
 			this.el.emit("keyboardIsOpenMove");
+			var mapBtn = document.createElement('a-button');
+			mapBtn.setAttribute('id', 'mapButton');
+			mapBtn.setAttribute('class', 'clickable');
+			mapBtn.setAttribute('color', 'white');
+			mapBtn.setAttribute('value', 'show map');
+			mapBtn.setAttribute('position', {x: -1.1, y: -2.5, z: -3.8});
+			mapBtn.setAttribute('scale', {x: 2.0, y: 0.8, z: 0.8});
+			//mapBtn.addEventListener('click', this.showMap.bind(this));
+			var root = document.querySelector('a-router');
+			root.appendChild(mapBtn);
 		},
 	
 		keyboardClosed: function(){
 			this.el.emit("keyboardIsClosedMove");
+			var mapBtn = document.querySelector('a-button#mapButton');
+			if(mapBtn) mapBtn.parentNode.removeChild(mapBtn);
 		},
 	
-		demoRun: function(){
-			var baseUrl = window.location.origin;
-			var queryUrl = baseUrl + '/geoSearch';
-			axios.get(queryUrl)
-				.then((response) => {
-					console.log(response);
-				})
+	
+		showMap: function(){
+			var root = document.querySelector('a-router');
+			if(!document.querySelector('a-entity#mapElement')){
+				var mapEl = document.createElement('a-entity');
+				mapEl.setAttribute('id', 'mapElement');
+				mapEl.setAttribute('map-overlay', 'nothing:nothing;');
+				root.appendChild(mapEl);
+			}
+	
 		},
+	
+	
+		mapCoordinates: function(event){
+			// USING THE MAP ALSO HAS SOME BUGS/GOTCHAS.  MAP GOING BLANK  NOT RECOVERING, AND NO RESULTS;
+			console.log(event);
+			var lat = event.detail.lat;
+			var lng = event.detail.lng;
+			this.getPic(lat, lng);
+		/*	var baseUrl = window.location.origin;
+			var queryUrl = baseUrl + '/searchThumbCoords/' + lat +"/"+ lng;
+			return axios.get(queryUrl).then((response) => {
+				console.log(response);
+				this.showPic(response.data.url)
+			})*/
+		},
+	
+	
 	
 		runQueryBackEnd: function (location) {
 			console.log(location);
-			if (axios) {
 				var baseUrl = window.location.origin;
-				var queryUrl = baseUrl + '/user/search';
-				return axios.post(queryUrl, {query: location}).then((response) => {
+				var queryUrl = baseUrl + '/search';
+				return axios.post(queryUrl, {query: location, source: 'text'}).then((response) => {
 					console.log(response);
 					var placeName = response.data[1].address.replace(/\s*/, "+");
 					//this.runQuery(encodeURI(placeName));
 					var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
-					/*	axios.get(getImage)
+						axios.get(getImage)
 							.then((response) => {
 								console.log(response);
 							})
 							.catch(err => {
 								console.log(err);
-							})*/
+							})
 				});
-			}
+	
 		},
+	
+		saveImage: function(){
+			var sky = document.querySelector('a-sky');
+			var lat = sky.getAttribute('data-lat');
+			var lng = sky.getAttribute('data-lng');
+			var src = sky.getAttribute('src');
+			axios.get(src)
+				.then((response) => {
+					console.log(response);
+				})
+			var baseUrl = window.location.origin;
+			var queryUrl = baseUrl + '/search-save';
+			return axios.post(queryUrl, {query: location}).then((response) => {
+				console.log(response);
+				var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
+				axios.get(getImage)
+					.then((response) => {
+						console.log(response);
+					})
+					.catch(err => {
+						console.log(err);
+					})
+	
+			});
+		},
+	
+	
 	
 		runQuery: function (location) {
 			console.log(location);
-			if (axios) {
 				var geocodeAPI = "4f03af1a1ea4428891dd006b61a9b4be";
 				// Figure out the geolocation
 				var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&min_confidence=9&pretty=1&key=" + geocodeAPI;
@@ -3060,17 +3601,18 @@
 					$("a-text#noresults")
 					//return "";
 				});
-			}
 		},
 	
 		// Google Street view only returns an image if the lat/long (location) is near enough (corresponds) to
 		// A location which is a street and where a street view image exists.
 		getPic: function (queryLat, queryLng) {
-	
+			// todo plug in a different means of informing user that no results exist
 			var zoom = 1;
-			var lat = queryLat || 41.5044381; //39.9495073;//41.5044381; //32.472170;
-			var lng = queryLng || -81.6068944; //-75.1506225;//-81.6068944; //34.996909;
+	
+			var lat = queryLat || 53.45688234441371; //41.5044381; //39.9495073;//41.5044381; //32.472170;
+			var lng = queryLng || -1.4538002014160156;//-81.6068944; //-75.1506225;//-81.6068944; //34.996909;
 			var loader = new GSVPANO.PanoLoader({zoom: zoom});
+			//var loader = GSVPANO.PanoLoader({zoom: zoom});
 	
 			loader.onPanoramaLoad = (data) => {
 				try{
@@ -3089,7 +3631,7 @@
 	
 			// Set error handle.
 			loader.onError = (message) => {
-				alert(message);
+				alert(message); // todo plug in a different means of informing user that no results exist
 				return null;
 			}
 	
@@ -3105,32 +3647,25 @@
 				// inform user no image was found
 			}
 		},
-		saveImage: function(){
-			var sky = document.querySelector('a-sky');
-			var lat = sky.getAttribute('data-lat');
-			var lng = sky.getAttribute('data-lng');
-			var src = sky.getAttribute('src');
-			axios.get(src)
+	
+		demoRun: function(){
+			var baseUrl = window.location.origin;
+			var queryUrl = baseUrl + '/geoSearch';
+			axios.get(queryUrl)
 				.then((response) => {
 					console.log(response);
 				})
-			var baseUrl = window.location.origin;
-			var queryUrl = baseUrl + '/search-save';
-			return axios.post(queryUrl, {query: location}).then((response) => {
-				console.log(response);
-				var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
-	
-			});
-		}
+		},
 	
 	});
 
 /***/ }),
-/* 35 */
+/* 38 */,
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 	/* global AFRAME */
-	var axios = __webpack_require__(3);
+	var axios = __webpack_require__(6);
 	/**
 	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
 	 * back in.
@@ -3223,7 +3758,7 @@
 	});
 
 /***/ }),
-/* 36 */
+/* 40 */
 /***/ (function(module, exports) {
 
 	/******/ (function(modules) { // webpackBootstrap
@@ -5256,6 +5791,349 @@
 	/***/ })
 	/******/ ]);
 	//# sourceMappingURL=aframe-material.js.map
+
+/***/ }),
+/* 41 */
+/***/ (function(module, exports, __webpack_require__) {
+
+	/* global AFRAME */
+	var axios = __webpack_require__(6);
+	/**
+	 * Component that listens to an event, fades out an entity, swaps the texture, and fades it
+	 * back in.
+	 */
+	AFRAME.registerComponent('map-overlay', {
+		schema: {
+			nothing: {type: 'string'}
+		},
+	
+		// ACTUAL IMPLEMENTATION IS LOCATED WITHIN THE nav-row.js FILE
+	
+		init: function () {
+			var data = this.data;
+			var el = this.el;
+			//var html = document.createElement('div');
+			//html.setAttribute('id', 'embeddedMap');
+			//html.setAttribute('style', 'position: absolute; top: 0; right: 0; height: 200px; width: 200px;');
+			el.setAttribute('style', 'position: absolute;' +
+				'margin: 10px;'+
+				' top: 0; ' +
+				'right: 0; '
+				//'perspective: 500px;' +
+				//' perspective-origin: 150% 150%; ' +
+				//'transform-style: preserve-3d; ' +
+				//'transform: translateZ(50px);'
+			);
+			var map = document.createElement('div');
+			map.setAttribute('id', 'map');
+			el.appendChild(map);
+			//var attach = document.querySelector('body');
+			//attach.appendChild(html);
+			this.initialize();
+			console.log(AFRAME);
+	
+	
+			this.el.addEventListener('gotLocation', function(event){
+				console.log('gotLocation Event: ', event);
+			})
+	
+		},
+	
+		remove: function(){
+			var mapContainer = document.querySelector('div#embeddedMap');
+			mapContainer.parentNode.removeChild(mapContainer);
+		},
+	
+		initialize: function () {
+			var geocoder;
+			var marker;
+			var loader;
+			var locations = [
+				{lat: 51.50700703827454, lng: -0.12791916931155356},
+				{lat: 32.6144404, lng: -108.9852017},
+				{lat: 39.36382677360614, lng: 8.431220278759724},
+				{lat: 59.30571937680209, lng: 4.879402148657164},
+				{lat: 28.240385123352873, lng: -16.629988706884774},
+				{lat: 50.09072314148827, lng: 14.393133454556278},
+				{lat: 41.413416092316275, lng: 2.1531126527786455},
+				{lat: 35.69143938066447, lng: 139.695139627539},
+				{lat: 35.67120372775569, lng: 139.77167914398797},
+				{lat: 54.552083679428065, lng: -3.297380963134742}
+			];
+	
+			var pos;
+			if (window.location.hash) {
+				var parts = window.location.hash.substr(1).split(',');
+				pos = {lat: parts[0], lng: parts[1]};
+			} else {
+				pos = locations[Math.floor(Math.random() * locations.length)];
+			}
+			var myLatlng = new google.maps.LatLng(pos.lat, pos.lng);
+	
+			var myOptions = {
+				zoom: 4,
+				center: myLatlng,
+				mapTypeId: google.maps.MapTypeId.ROADMAP,
+				streetViewControl: false
+			};
+			this.gmap = new google.maps.Map(document.getElementById("map"), myOptions);
+			google.maps.event.addListener(this.gmap, 'click', this.addMarker.bind(this));
+			console.log('this.gmap', this.gmap);
+			//	geocoder = new google.maps.Geocoder();
+			//	setZoom( 2 );
+			//	addMarker( myLatlng );
+		},
+	
+		addMarker: function (event) {
+			console.log('map click event', event);
+			var location = event.latLng;
+			this.el.emit('gotLocation', {lat: location.lat(),lng: location.lng()}, true);
+			if (this.marker) this.marker.setMap(null);
+			this.marker = new google.maps.Marker({
+				position: location,
+				map: this.gmap
+			});
+			this.marker.setMap(this.gmap);
+	
+		//	showMessage('Loading panorama for zoom ' + /*zoom*/ 4 + '...');
+			//loader.load( location );
+		}
+	});
+
+
+/***/ }),
+/* 42 */
+/***/ (function(module, exports) {
+
+	var GSVPANO = GSVPANO || {};
+	GSVPANO.PanoLoader = function (parameters) {
+	
+		'use strict';
+	
+		var _parameters = parameters || {},
+			_location,
+			_zoom,
+			_panoId,
+			_panoClient = new google.maps.StreetViewService(),
+			_count = 0,
+			_total = 0,
+			_canvas = [],
+			_ctx = [],
+			_wc = 0,
+			_hc = 0,
+			result = null,
+			rotation = 0,
+			copyright = '',
+			onSizeChange = null,
+			onPanoramaLoad = null;
+	
+		var levelsW = [ 1, 2, 4, 7, 13, 26 ],
+			levelsH = [ 1, 1, 2, 4, 7, 13 ];
+	
+		var widths = [ 416, 832, 1664, 3328, 6656 ],
+			heights = [ 416, 416, 832, 1664, 3328 ];
+	
+		var gl = null;
+		try{
+			var canvas = document.createElement( 'canvas' );
+		    gl = canvas.getContext('experimental-webgl');
+		    if(gl == null){
+		        gl = canvas.getContext('webgl');
+		    }
+		}
+		catch(error){}
+	
+		var maxW = 1024,
+			maxH = 1024;
+	
+		if( gl ) {
+			var maxTexSize = gl.getParameter(gl.MAX_TEXTURE_SIZE);
+			console.log( 'MAX_TEXTURE_SIZE ' + maxTexSize );
+			maxW = maxH = maxTexSize;
+		}
+			
+		this.setProgress = function (p) {
+		
+			if (this.onProgress) {
+				this.onProgress(p);
+			}
+			
+		};
+	
+		this.throwError = function (message) {
+		
+			if (this.onError) {
+				this.onError(message);
+			} else {
+				console.error(message);
+			}
+			
+		};
+	
+		this.adaptTextureToZoom = function () {
+		
+			var w = levelsW[ _zoom ] * 416,
+				h = levelsH[ _zoom ] * 416;
+	
+			w = widths [ _zoom ];
+			h = heights[ _zoom ];
+	
+			_wc = Math.ceil( w / maxW );
+			_hc = Math.ceil( h / maxH );
+	
+			_canvas = []; _ctx = [];
+	
+			var ptr = 0;
+			for( var y = 0; y < _hc; y++ ) {
+				for( var x = 0; x < _wc; x++ ) {
+					var c = document.createElement('canvas');
+					if( x < ( _wc - 1 ) ) c.width = maxW; else c.width = w - ( maxW * x );
+					if( y < ( _hc - 1 ) ) c.height = maxH; else c.height = h - ( maxH * y );
+					console.log( 'New canvas of ' + c.width + 'x' + c.height );
+					_canvas.push( c );
+					_ctx.push( c.getContext('2d') );
+					ptr++;
+				}
+			}
+	
+			//console.log( _canvas );
+	
+		};
+	
+		this.composeFromTile = function (x, y, texture) {
+		
+			x *= 512;
+			y *= 512;
+			var px = Math.floor( x / maxW ), py = Math.floor( y / maxH );
+	
+			x -= px * maxW;
+			y -= py * maxH;
+	
+			_ctx[ py * _wc + px ].drawImage(texture, 0, 0, texture.width, texture.height, x, y, 512, 512 );
+			this.progress();
+			
+		}; 
+	
+		this.progress = function() {
+	
+			_count++;
+			
+			var p = Math.round(_count * 100 / _total);
+			this.setProgress(p);
+			
+			if (_count === _total) {
+				this.canvas = _canvas;
+				this.panoId = _panoId;
+				this.zoom = _zoom;
+				if (this.onPanoramaLoad) {
+					this.onPanoramaLoad();
+				}
+			}
+		}
+	
+		this.loadFromId = function( id ) {
+	
+			_panoId = id;
+			this.composePanorama();
+	
+		};
+	
+		this.composePanorama = function () {
+		
+			this.setProgress(0);
+			//console.log('Loading panorama for zoom ' + _zoom + '...');
+			
+			var w = levelsW[ _zoom ],
+				h = levelsH[ _zoom ],
+				self = this,
+				url,
+				x,
+				y;
+	
+				//console.log( w, h, w * 512, h * 512 );
+				
+			_count = 0;
+			_total = w * h;
+			
+			var self = this;
+			for( var y = 0; y < h; y++ ) {
+				for( var x = 0; x < w; x++ ) {
+					var url = 'https://cbks2.google.com/cbk?cb_client=maps_sv.tactile&authuser=0&hl=en&panoid=' + _panoId + '&output=tile&zoom=' + _zoom + '&x=' + x + '&y=' + y + '&' + Date.now();
+					url = 'https://geo0.ggpht.com/cbk?cb_client=maps_sv.tactile&authuser=0&hl=en&panoid=' + _panoId + '&output=tile&x=' + x + '&y=' + y + '&zoom=' + _zoom + '&nbt&fover=2';
+	
+					( function( x, y ) { 
+						if( _parameters.useWebGL ) {
+							var texture = THREE.ImageUtils.loadTexture( url, null, function() {
+								//console.log( 'loaded ' + url );
+								self.composeFromTile( x, y, texture );
+							} );
+						} else {
+							var img = new Image();
+							img.addEventListener( 'load', function() {
+								self.composeFromTile( x, y, this );			
+							} );
+							img.crossOrigin = '';
+							img.src = url;
+						}
+					} )( x, y );
+				}
+			}
+			
+		};
+		
+		this.load = function (location) {
+		
+			//console.log('Load for', location);
+			var self = this;
+	
+			var url = 'https://maps.google.com/cbk?output=json&hl=x-local&ll=' + location.lat() + ',' + location.lng() + '&cb_client=maps_sv&v=3';
+			url = 'https://cbks0.google.com/cbk?cb_client=maps_sv.tactile&authuser=0&hl=en&output=polygon&it=1%3A1&rank=closest&ll=' + location.lat() + ',' + location.lng() + '&radius=350';
+			
+			var http_request = new XMLHttpRequest();
+			http_request.open( "GET", url, true );
+			http_request.onreadystatechange = function () {
+				if ( http_request.readyState == 4 && http_request.status == 200 ) {
+					var data = JSON.parse( http_request.responseText );
+					//self.loadPano( location, data.Location.panoId );
+					self.loadPano( location, data.result[ 0 ].id );
+				}
+			};
+			http_request.send(null);
+	
+		};
+	
+		this.loadPano = function( location, id ) {
+	
+			//console.log( 'Load ' + id );
+			var self = this;
+			_panoClient.getPanoramaById( id, function (result, status) {
+				if (status === google.maps.StreetViewStatus.OK) {
+					self.result = result;
+					if( self.onPanoramaData ) self.onPanoramaData( result );
+					var h = google.maps.geometry.spherical.computeHeading(location, result.location.latLng);
+					rotation = (result.tiles.centerHeading - h) * Math.PI / 180.0;
+					copyright = result.copyright;
+					self.copyright = result.copyright;
+					_panoId = result.location.pano;
+					self.location = location;
+					self.composePanorama();
+				} else {
+					if( self.onNoPanoramaData ) self.onNoPanoramaData( status );
+					self.throwError('Could not retrieve panorama for the following reason: ' + status);
+				}
+			});
+			
+		};
+		
+		this.setZoom = function( z ) {
+			_zoom = z;
+			console.log( z );
+			this.adaptTextureToZoom();
+		};
+	
+		this.setZoom( _parameters.zoom || 1 );
+	
+	};
 
 /***/ })
 /******/ ]);

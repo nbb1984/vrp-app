@@ -3,7 +3,7 @@ var childProcess = require('child_process');
 var webpack = require('webpack');
 
 // Add HMR for development environments only.
-var entry = ['./src/index.js'];
+var entry = ['./app/index.js'];
 if (process.env.NODE_ENV === 'dev') {
 	entry = [
 		'webpack-dev-server/client?http://localhost:3333',
@@ -36,6 +36,9 @@ var plugins = [
 		BUILD_TIMESTAMP: JSON.stringify(getBuildTimestamp()),
 		//COMMIT_HASH: JSON.stringify(commitHash)
 	}),
+	/*new webpack.ProvidePlugin({
+		AFRAME: require.resolve("aframe"),
+	})*/
 ];
 if (process.env.NODE_ENV === 'production') {
 	plugins.push(new webpack.optimize.UglifyJsPlugin({
@@ -63,7 +66,7 @@ module.exports = {
 	module: {
 		loaders: [
 			{
-				test: /\/public\/js\/.*\.js?$/,
+				test: /\/app\/js\/.*\.js?$/,
 				exclude: /(node_modules|bower_components)/,
 				loader: 'babel',
 				query: {

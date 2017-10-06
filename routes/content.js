@@ -41,61 +41,6 @@ router.get('/', (req, res) => {
 	res.sendFile("index.html", options)
 });
 
-// ==================== Diffrent routes same page ========================
-
-router.get('/index', (req, res) => {
-	res.sendFile("index.html", options);
-});
-
-
-// Authentication Related Routes
-router.get('/login', (req, res) => {
-	var filePath = path.join(pathHelper._root + "/public/");
-	res.render(filePath + "index", {location: 'profile'});
-});
-
-router.get('/signup', (req, res) => {
-	res.redirect("/");
-});
-
-// Search / Content Related Routes
-router.get('/search', (req, res) => {
-	var filePath = path.join(pathHelper._root + "/public/");
-	res.render(filePath + "index", {location: 'search'});
-});
-
-router.get('/search-results', (req, res) => {
-	res.redirect("/");
-});
-
-router.get('/explore', (req, res) => {
-	var filePath = path.join(pathHelper._root + "/public/");
-	res.render(filePath + "index", {location: 'explore'});
-});
-
-router.get('/explore/categories', (req, res) => {
-	res.redirect("/");
-});
-
-router.get('/discover', (req, res) => {
-	res.redirect("/");
-});
-
-router.get('/help', (req, res) => {
-	var filePath = path.join(pathHelper._root + "/public/");
-	res.render(filePath + "index", {location: 'help'});
-});
-
-// User Related Routes
-router.get('/profile', ensureAuthenticated, (req, res) => {
-	res.sendFile("index.html", options);
-});
-
-router.get('/profile-expanded', ensureAuthenticated, (req, res) => {
-	res.sendFile("index.html", options);
-});
-
-// =======================================================================
 /*
 
 router.get('/index', (req, res) => {

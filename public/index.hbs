@@ -6,16 +6,16 @@
   <meta name="description" content="Aframe-Material">
   <script type="text/javascript" src="//maps.google.com/maps/api/js?sensor=false"></script>
 
-  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
-  <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>
-  <script src="https://unpkg.com/aframe-animation-component@3.2.5/dist/aframe-animation-component.min.js"></script>
+<!--  <script src="https://aframe.io/releases/0.7.0/aframe.min.js"></script>
+  <script src="https://rawgit.com/mayognaise/aframe-mouse-cursor-component/master/dist/aframe-mouse-cursor-component.min.js"></script>-->
+  <!--<script src="https://unpkg.com/aframe-animation-component@3.2.5/dist/aframe-animation-component.min.js"></script>-->
  <!-- <script src="https://cdn.rawgit.com/etiennepinchon/aframe-material/master/dist/aframe-material.min.js"></script>-->
-  <script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>
+  <!--<script src="https://unpkg.com/aframe-event-set-component@3.0.3/dist/aframe-event-set-component.min.js"></script>-->
 
   <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.4/lodash.min.js"
           integrity="sha256-IyWBFJYclFY8Pn32bwWdSHmV4B9M5mby5bhPHEmeY8w=" crossorigin="anonymous"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
-  <script src="js/manhole.js"></script>
+<!--  <script src="js/manhole.js"></script>-->
   <!--<script src="js/discoverSearch.js"></script>-->
   <script src="js/vpp-app.js"></script>
   <script type="text/javascript">
@@ -67,7 +67,7 @@ void main() {
 }
 
 </script>
-<a-scene>
+<a-scene routing="navController: #nav-attach" keyboard-shortcuts="enterVR: false">
 
 
   <a-entity laser-controls="hand: right"></a-entity>
