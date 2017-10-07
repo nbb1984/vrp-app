@@ -1,6 +1,7 @@
 /* global AFRAME */
 var axios = require("axios");
 var GSVPANO = require('../lib/GSVPano');
+var _ = require('lodash');
 /**
  * GOOGLE MAP WILL ONLY SHOW IF THE URL IS NOT A HASH URL.
  * A STREET VIEW IMAGE WILL ONLY BE FOUND IF THE COORDINATES USED LIE ON A STREET (OR AT LEAST VERY VERY CLOSE [I THINK])
@@ -12,11 +13,15 @@ AFRAME.registerComponent('search', {
 	},
 
 	init: function () {
+		//console.log(window.simpleState);
 		var data = this.data;
 		var el = this.el;
-
+		this.loggedIn = document.querySelector('a-router').is('LoggedIn');
 		axios.get(window.location.origin + '/compDetails/search')
 			.then((response) => {
+				if (_.has(response, 'user')) {
+					this.user = response.data.user;
+				}
 				var details = response.data.details;
 				var exclude = response.data.exclude;
 				exclude.push('element');
@@ -81,38 +86,41 @@ AFRAME.registerComponent('search', {
 
 	keyboardOpen: function () {
 		this.el.emit("keyboardIsOpenMove");
-		var mapBtn = document.createElement('a-button');
-		mapBtn.setAttribute('id', 'mapButton');
-		mapBtn.setAttribute('class', 'clickable');
-		mapBtn.setAttribute('color', 'white');
-		if (!document.querySelector('a-entity#mapElement')) {
-			mapBtn.setAttribute('value', 'show map');
-		} else {
-			mapBtn.setAttribute('value', 'hide map');
+		let isMobile = AFRAME.utils.device.isMobile();
+		if(!isMobile){
+			var mapBtn = document.createElement('a-button');
+			mapBtn.setAttribute('id', 'mapButton');
+			mapBtn.setAttribute('class', 'clickable');
+			mapBtn.setAttribute('color', 'white');
+			if (!document.querySelector('a-entity#mapElement')) {
+				mapBtn.setAttribute('value', 'show map');
+			} else {
+				mapBtn.setAttribute('value', 'hide map');
+			}
+			mapBtn.setAttribute('position', {x: -1.1, y: -2.5, z: -3.8});
+			mapBtn.setAttribute('scale', {x: 2.0, y: 0.8, z: 0.8});
+			mapBtn.addEventListener('click', this.showMap.bind(this));
+			let root = document.querySelector('a-router');
+			root.appendChild(mapBtn);
 		}
-		mapBtn.setAttribute('position', {x: -1.1, y: -2.5, z: -3.8});
-		mapBtn.setAttribute('scale', {x: 2.0, y: 0.8, z: 0.8});
-		mapBtn.addEventListener('click', this.showMap.bind(this));
-		var root = document.querySelector('a-router');
-		root.appendChild(mapBtn);
 	},
 
 	keyboardClosed: function () {
 		this.el.emit("keyboardIsClosedMove");
 		var mapBtn = document.querySelector('a-button#mapButton');
-		if (mapBtn) mapBtn.parentNode.removeChild(mapBtn);
+		this.tryRemoveElement(mapBtn);
+		//if (mapBtn) mapBtn.parentNode.removeChild(mapBtn);
 	},
 
 
-	showMap: function () {
-		var mapEl, mapBtn;
-		var root = document.querySelector('a-entity#content-root');
-		if (document.querySelector('a-entity#mapElement')) {
-			mapEl = document.querySelector('a-entity#mapElement');
-			mapEl.parentNode.removeChild(mapEl);
-			mapBtn = document.querySelector('a-button#mapButton');
-			mapBtn.setAttribute('value', 'show map');
-		} else {
+	showMap: function (updateOnly) {
+		console.log('show map');
+		var root, mapEl, mapBtn;
+		root = document.querySelector('a-entity#content-root');
+		mapEl = document.querySelector('a-entity#mapElement');
+
+		if (!mapEl) {
+			console.log('make map');
 			mapEl = document.createElement('a-entity');
 			mapEl.setAttribute('id', 'mapElement');
 			mapEl.setAttribute('map-overlay', 'nothing:nothing;');
@@ -120,6 +128,35 @@ AFRAME.registerComponent('search', {
 			mapBtn = document.querySelector('a-button#mapButton');
 			mapBtn.setAttribute('value', 'hide map');
 		}
+	},
+
+	hideMap: function () {
+		var root, mapEl, mapBtn;
+		if (document.querySelector('a-entity#mapElement')) {
+			mapEl = document.querySelector('a-entity#mapElement');
+			mapEl.parentNode.removeChild(mapEl);
+			mapBtn = document.querySelector('a-button#mapButton');
+			mapBtn.setAttribute('value', 'show map');
+		}
+	},
+
+	getMyLocation: function () {
+		var el = document.getElementById('myLocationButton');
+		el.addEventListener('click', function (event) {
+			event.preventDefault();
+			navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
+		}, false);
+	},
+
+	geoSuccess: function (position) {
+
+		var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
+		var isMapPresent = document.querySelector('a-entity#mapElement');
+		if(isMapPresent){
+			isMapPresent.emit('goToLocation', {currentLocation: currentLocation});
+			// move to position (thanks @theCole!)
+		}
+
 
 	},
 
@@ -141,24 +178,25 @@ AFRAME.registerComponent('search', {
 
 	runQueryBackEnd: function (location) {
 		var errorMsg = document.querySelector('a-entity#errorMsg');
-		if(errorMsg){
+		if (errorMsg) {
 			errorMsg.parentNode.removeChild(errorMsg);
-		};
+		}
+
+		this.el.addState('newSearch');
 		console.log(location);
 		return axios.post(window.location.origin + '/search', {query: location})
 			.then((response) => {
 				console.log(response);
-				if(response.data.ok){
+				if (response.data.ok) {
 					this.getPic(response.data.details.lat, response.data.details.lng);
 				} else {
-					if(_.has(response, 'data.err')){
+					if (_.has(response, 'data.err')) {
 						console.log('error during search or search save');
 					}
-					if(_.has(response, 'data.userError')){
+					if (_.has(response, 'data.userError')) {
 						console.log('not logged in');
 					}
 				}
-
 
 
 				/*var placeName = response.data[1].address.replace(/\s*!/, "+");
@@ -248,7 +286,8 @@ AFRAME.registerComponent('search', {
 				this.showPic(newImage, lat, lng);
 			} catch (err) {
 				console.log(err);
-				this.errorMsg(message);
+				//this.errorMsg(message);
+				this.onGetPicError("No Result.  Here is a Random View!");
 			}
 		};
 
@@ -257,14 +296,33 @@ AFRAME.registerComponent('search', {
 
 		// Set error handle.
 		loader.onError = (message) => {
-			this.errorMsg(message);
+			this.onGetPicError(message);
+			//this.errorMsg(message);
 			//alert(message); // todo plug in a different means of informing user that no results exist
 			return null;
 		}
 
 	},
 
+	onGetPicError: function (message) {
+		this.errorMsg(message);
+		if (this.el.is('newSearch')) {
+			this.el.removeState('newSearch');
+			var randomPics = [
+				{lat: 40.7016113, lng: -73.9890025},
+				{lat: 40.7012087, lng: -73.9877161},
+				{lat: 34.0419134, lng: -118.2564639},
+				{lat: 40.6431476, lng: -111.4953956}
+			];
+
+			var randomLoc = randomPics[Math.floor(Math.random() * randomPics.length)];
+			this.getPic(randomLoc.lat, randomLoc.lng);
+		}
+	},
+
 	errorMsg: function (errorMessage) {
+		var priorError = document.querySelector('a-entity#errorMsg');
+		this.tryRemoveElement(priorError);
 		var messageContainer = document.createElement('a-entity');
 		messageContainer.setAttribute('id', 'errorMsg');
 
@@ -283,12 +341,17 @@ AFRAME.registerComponent('search', {
 
 	showPic: function (newImage, lat, lng) {
 		console.log('newImage');
+		if (this.el.is('newSearch')) {
+			this.el.removeState('newSearch');
+		}
 		if (newImage) {
 			$('a-sky').attr('src', newImage);
 			$('a-sky').attr('data-lat', lat);
 			$('a-sky').attr('data-lng', lng);
-			this.showMap();
-			this.showSaveButton();
+
+			this.hideMap();
+
+			if (this.user) this.showSaveButton();
 		} else {
 			// inform user no image was found
 		}
@@ -314,13 +377,29 @@ AFRAME.registerComponent('search', {
 		var lat = imageEl.getAttribute('data-lat');
 		var lng = imageEl.getAttribute('data-lng');
 		var image = imageEl.getAttribute('src');
-		axios.post(window.location.origin + '/saveSearchImage', {lat: lat, lng: lng, image: image})
+		var data = {lat: lat, lng: lng, image: image};
+		console.log(data);
+		axios.post(window.location.origin + '/saveSearchImage', data)
 			.then(response => {
 				console.log(response);
+				if (_.has(response, 'data.err')) {
+					console.log('error during search or search save');
+				}
+				if (_.has(response, 'data.userError')) {
+					this.errorMsg("Must Be Logged In to Save");
+					console.log('not logged in');
+				}
 			})
 			.catch(err => {
 				console.log(err);
 			})
+	},
+
+	tryRemoveElement: function (element) {
+		if (!element) {
+			return;
+		}
+		element.parentNode.removeChild(element);
 	}
 
 });

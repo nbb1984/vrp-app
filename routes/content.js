@@ -21,12 +21,24 @@ function ensureAuthenticated(req, res, next) {
 	}
 }
 
+function checkAuthenticated(req, res, next) {
+	if(req.isAuthenticated()){
+		console.log("authenticated");
+		return next();
+	} else {
+		req.flash('error_msg','You are not logged in');
+		console.log("login coming!!!!!!!!!!!!!!!!!!!");
+		//res.redirect("/login");
+		return next();
+	}
+}
+
 // Get Homepage
-router.get('/', ensureAuthenticated, function (req, res) {
+/*router.get('/', ensureAuthenticated, function (req, res) {
 	console.log("dasjlfkasdj;flka");
 	console.log(req.body);
 	res.redirect('/login');
-});
+});*/
 
 var options = {
 	root: path.join(pathHelper._root + "/public/"),
@@ -37,7 +49,7 @@ var options = {
 	}
 };
 
-router.get('/', (req, res) => {
+router.get('/', checkAuthenticated, (req, res) => {
 	res.sendFile("index.html", options)
 });
 

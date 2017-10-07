@@ -23,9 +23,7 @@ var UserSchema = new Schema({
 		type: Schema.Types.ObjectId,
 		ref: "User"
 	}],
-	saved: [{
-			type: String
-		}]
+	saved: [{type: String}]
 });
 
 var User = mongoose.model("User", UserSchema);

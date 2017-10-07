@@ -1,5 +1,6 @@
 /* global AFRAME */
 var axios = require("axios");
+var _ = require('lodash');
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
@@ -14,10 +15,16 @@ AFRAME.registerComponent('nav', {
 		var el = this.el;
 		var initialPage;
 		this.el.addEventListener('initialPage', (event) => {
-				initialPage = event.detail.page;
+			initialPage = event.detail.page;
 		});
+		this.el.addEventListener('navigateTo', function(event){
+			this.selectorProgMove(event.detail.newPage);
+		}.bind(this));
 		axios.get(window.location.origin + '/compDetails/nav')
 			.then(response => {
+				if (_.has(response, 'user')) {
+					this.user = response.data.user;
+				}
 				console.log(response);
 				var details = response.data.details;
 				var exclude = response.data.exclude;
@@ -56,159 +63,87 @@ AFRAME.registerComponent('nav', {
 	selectorMove: function (event) {
 		console.log(window.location);
 		var pageSelected = event.detail.target.getAttribute('data-page');
-		//history.pushState(pageSelected, null, window.location.origin + '/' + pageSelected);
-		location.hash = pageSelected;
-		console.log(pageSelected);
-		//this.includedPages(pageSelected);
-		var selected = event.detail.target.getAttribute('position');
-		//event.detail.target.emit('displayNewScene', {newScene: pageSelected}, true);
-		var position = {
-			x: selected.x,
-			y: selected.y,
-			z: selected.z - 0.02
-		};
-		var highlighter = document.querySelector('a-ring#selectedhighlighter');
-		highlighter.setAttribute('position', position);
-	},
-
-	/*includedPages: function (page) {
-		var priorContent = document.querySelector('a-entity#content-root');
-		if (priorContent) {
-			priorContent.parentNode.removeChild(priorContent);
+		if (pageSelected === 'hide-menu') {
+			this.hideMenus();
 		} else {
-			//page = 'explore';
-		}
-		var root, keyboard;
-		switch (page) {
-			case 'explore':
-				this.buildExplorePage();
-				break;
-			case 'profile':
-				var showSignup, loggedIn;
-				var profileIcon = document.querySelector('a-image[data-page=profile]');
-				if(profileIcon){
-					showSignup = profileIcon.is('showSignup');
-					loggedIn = profileIcon.is('loggedIn');
-				}
-				if (loggedIn) {
-					this.buildExplorePage();
-				} else {
-					if (showSignup) {
-						document.querySelector('a-image[data-page=profile]').removeState('showSignup');
-						this.buildSignupPage();
-					} else {
-						this.buildLoginPage();
-					}
-				}
-				break;
-			case 'search':
-				this.buildSearchPage();
-				break;
-			case 'profile-expanded':
-				this.buildProfilePage();
-				break;
-			case 'help':
-				this.buildHelpMenu();
-				break;
-			default:
-				this.build404();
-				break;
+			location.hash = pageSelected;
+
+			//history.pushState(pageSelected, null, window.location.origin + '/' + pageSelected);
+
+			console.log(pageSelected);
+			//this.includedPages(pageSelected);
+			var selected = event.detail.target.getAttribute('position');
+			//event.detail.target.emit('displayNewScene', {newScene: pageSelected}, true);
+			var position = {
+				x: selected.x,
+				y: selected.y,
+				z: selected.z - 0.02
+			};
+			var highlighter = document.querySelector('a-ring#selectedhighlighter');
+			highlighter.setAttribute('position', position);
 		}
 	},
 
-	buildExplorePage: function () {
-		var root = this.buildBase();
-		var categories = document.createElement('a-entity');
-		categories.setAttribute('category-nav', 'initialCategory: mural;');
-		root.appendChild(categories);
-		var collection = document.createElement('a-entity');
-		collection.setAttribute('id', 'collection-root');
-		collection.setAttribute('collection-panels', {collection: 'mural', initial: true});
-		root.appendChild(collection);
-		this.el.sceneEl.appendChild(root);
-		root.setAttribute('visible', 'false');
-		setTimeout(() => {
-			root.setAttribute('visible', 'true');
-		}, 1000);
+	selectorProgMove: function (newPage) {
+		console.log(window.location);
+		var pageSelected = event.detail.target.getAttribute('data-page');
+		if (pageSelected === 'hide-menu') {
+			this.hideMenus();
+		} else {
+			var selected = this.el.querySelector('a-image[data-page='+ newPage +']');
+
+			var position = {
+				x: selected.x,
+				y: selected.y,
+				z: selected.z - 0.02
+			};
+			var highlighter = document.querySelector('a-ring#selectedhighlighter');
+			highlighter.setAttribute('position', position);
+		}
 	},
 
-	buildSearchPage: function () {
-		var root = this.buildBase();
-		root.appendChild(this.buildKeyboard());
-		var search = document.createElement('a-entity');
-		search.setAttribute('search', 'nothing: nothing;');
-		root.appendChild(search);
-		this.el.sceneEl.appendChild(root);
-	},
+	hideMenus: function (event) {
+		console.log('submit click');
+		var nav = document.querySelector('a-entity#nav-attach');
+		nav.setAttribute('visible', 'false');
 
-	buildSignupPage: function () {
-		var root = this.buildBase();
-		root.appendChild(this.buildKeyboard());
-		var signup = document.createElement('a-entity');
-		signup.setAttribute('signup', 'nothing: nothing;');
-		root.appendChild(signup);
-		this.el.sceneEl.appendChild(root);
-	},
+		var menu = document.querySelector('a-router');
+		menu.setAttribute('visible', 'false');
 
-	buildLoginPage: function () {
-		var root = this.buildBase();
-		root.appendChild(this.buildKeyboard());
-		var signup = document.createElement('a-entity');
-		signup.setAttribute('login', 'nothing: nothing;');
-		root.appendChild(signup);
-		this.el.sceneEl.appendChild(root);
-	},
+		var cursor = document.querySelector('[raycaster]');
+		cursor.setAttribute('raycaster', 'objects', '.showIcons');
+		console.log(cursor.components);
+
+		var showContainer = document.createElement('a-entity');
+		showContainer.setAttribute('id', 'showAgain');
+		showContainer.setAttribute('position', '0 -2.5 -3.08');
+
+		var showText = document.createElement('a-text');
+		showText.setAttribute('value', 'Show Menus and Icons');
+		showText.setAttribute('position', '-1 -1 0');
+		showText.setAttribute('text', 'height: 3;');
 
 
-	buildHelpMenu: function(){
-		var root = this.buildBase();
-		root.setAttribute('position', '0 1.5 -4');
-		var helpMenu = document.createElement('a-entity');
-		helpMenu.setAttribute('help-menu','nothing: nothing;');
-		root.appendChild(helpMenu);
-		this.el.sceneEl.appendChild(root);
-	},
+		var showItems = document.createElement('a-image');
+		showItems.setAttribute('src', 'assets/ui/ic_visibility_black_48dp_2x.png');
+		showItems.setAttribute('class', 'showIcons');
+		showItems.setAttribute('position', '0 -0.5 0');
+		showItems.addEventListener('click', function (evt) {
+			var cursor = document.querySelector('[raycaster]');
+			cursor.setAttribute('raycaster', 'objects', '.clickable');
 
-	buildProfilePage: function(){
-		var root = this.buildBase();
-		var profile = document.createElement('a-entity');
-		profile.setAttribute('map-overlay', 'nothing: nothing;');
-		root.appendChild(profile);
-		this.el.sceneEl.appendChild(root);
-	},
+			var nav = document.querySelector('a-entity#nav-attach');
+			nav.setAttribute('visible', 'true');
 
-	buildAddNote: function(){
-		var root = this.buildBase();
-	},
+			var menu = document.querySelector('a-router');
+			menu.setAttribute('visible', 'true');
 
-	buildBase: function(){
-		var root = document.createElement('a-entity');
-		root.setAttribute('id', 'content-root');
-		return root;
-	},
-
-	buildKeyboard: function () {
-		var keyContainer = document.createElement('a-entity');
-		keyContainer.setAttribute('position', "0 -0.5 0");
-		var keyboard = document.createElement('a-keyboard');
-		keyboard.setAttribute('class', "clickable");
-		keyboard.setAttribute('physical-keyboard', "true");
-		keyboard.setAttribute('position', "-1.724 -5.751 -2.52");
-		keyboard.setAttribute('scale', "2.5 2.5 2.5");
-		keyboard.setAttribute('rotation', "-40 0 0");
-		keyContainer.appendChild(keyboard);
-		return keyContainer;
-	},
-
-	build404: function(){
-		var root = document.createElement('a-entity');
-		root.setAttribute('id', 'content-root');
-		var noFound = document.createElement('a-text');
-		noFound.setAttribute('value', "404. Page Not Found :(");
-		noFound.setAttribute('position', {x: -1.176, y: -0.801, z: -2.944});
-		noFound.setAttribute('text', "height: 10");
-		root.appendChild(noFound);
-		this.el.sceneEl.appendChild(root);
-	}*/
+			var show = document.querySelector('a-entity#showAgain');
+			show.parentNode.removeChild(show);
+		});
+		showContainer.appendChild(showText);
+		showContainer.appendChild(showItems);
+		this.el.sceneEl.appendChild(showContainer);
+	}
 
 });

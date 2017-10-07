@@ -5,7 +5,8 @@
 	require('aframe-mouse-cursor-component');
 	require('aframe-event-set-component');
 	require('aframe-animation-component');*/
-
+	//require('./simpleState');
+	require('./detectPlatform');
 	require('./router-system');
 	require('./router');
 	require('./manhole');
@@ -17,8 +18,10 @@
 	require('./search');
 	require('./help-menu');
 	require('./user-profile');
-	require("../lib/aframe-material.js");
+
 
 
 	require('./embededMap');
+	require("../lib/aframe-material");
+	//require('../lib/annyang');
 })();

@@ -26,8 +26,13 @@ AFRAME.registerComponent('router', {
 		var oldContent = this.el.children;
 		if (oldContent.length > 0) {
 			_.forEach(oldContent, (item) => {
-				item.parentNode.removeChild(item);
+				if(item) item.parentNode.removeChild(item);
 			})
+		}
+		var keybrd = document.querySelector('a-keyboard');
+		if(keybrd){
+			console.log(keybrd);
+			keybrd.parentNode.removeChild(keybrd);
 		}
 		console.log('page on: ', page);
 		/*var priorContent = document.querySelector('a-entity#content-root');
@@ -146,6 +151,7 @@ AFRAME.registerComponent('router', {
 	},
 
 	buildKeyboard: function () {
+		var str = "";
 		var keyContainer = document.createElement('a-entity');
 		keyContainer.setAttribute('position', "0 -0.5 0");
 		var keyboard = document.createElement('a-keyboard');
@@ -154,6 +160,10 @@ AFRAME.registerComponent('router', {
 		keyboard.setAttribute('position', "-1.724 -5.751 -2.52");
 		keyboard.setAttribute('scale', "2.5 2.5 2.5");
 		keyboard.setAttribute('rotation', "-40 0 0");
+		keyboard.addEventListener('input', (e)=>{
+			str += e.detail;
+			console.log(str);
+		});
 		keyContainer.appendChild(keyboard);
 		return keyContainer;
 	},

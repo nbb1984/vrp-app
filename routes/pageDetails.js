@@ -44,60 +44,77 @@ router.get('/', (req, res) => {
 });
 
 router.get('/compDetails/:comp', (req, res) => {
+	var content;
 	var basePath = "assets/ui/";
 	switch (req.params.comp) {
 		case 'nav':
-			res.json({
+			content = {user: req.user,
 				exclude: ['page'], details: [
 					{
 						id: "explore",
 						"data-page": "explore",
 						element: "a-image",
+						side: 'front',
 						src: basePath + "explore.png",
+						class: "clickable",
+						width: 0.5,
+						height: 0.5,
+						position: {x: -2.4, y: -2, z: -3.8}
+					},
+					{
+						id: "help",
+						"data-page": "help",
+						element: "a-image",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-help.png",
+						class: "clickable",
+						width: 0.5,
+						height: 0.5,
+						position: {x: 0.8, y: -2, z: -3.8}
+					},
+					{
+						id: "search",
+						"data-page": "search",
+						element: "a-image",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-search.png",
 						class: "clickable",
 						width: 0.5,
 						height: 0.5,
 						position: {x: -1.6, y: -2, z: -3.8}
 					},
 					{
-						id: "help",
-						"data-page": "help",
+						id: "profile",
+						"data-page": "profile",
 						element: "a-image",
-						src: basePath + "help.png",
-						class: "clickable",
-						width: 0.5,
-						height: 0.5,
-						position: {x: 1.6, y: -2, z: -3.8}
-					},
-					{
-						id: "search",
-						"data-page": "search",
-						element: "a-image",
-						src: basePath + "search.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-Profile.png",
 						class: "clickable",
 						width: 0.5,
 						height: 0.5,
 						position: {x: -0.8, y: -2, z: -3.8}
 					},
 					{
-						id: "profile",
-						"data-page": "profile",
-						element: "a-image",
-						src: basePath + "Profile.png",
-						class: "clickable",
-						width: 0.5,
-						height: 0.5,
-						position: {x: 0, y: -2, z: -3.8}
-					},
-					{
 						id: "profile-expanded",
 						"data-page": "profile-expanded",
 						element: "a-image",
-						src: basePath + "myPassport.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-myPassport.png",
 						class: "clickable",
 						width: 0.5,
 						height: 0.5,
-						position: {x: .8, y: -2, z: -3.80}
+						position: {x: 0, y: -2, z: -3.80}
+					},
+					{
+						id: "hide-menu",
+						"data-page": "hide-menu",
+						element: "a-image",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-hide-menu.png",
+						class: "clickable",
+						width: 0.5,
+						height: 0.5,
+						position: {x: 1.6, y: -2, z: -3.80}
 					},
 					{
 						id: 'selectedhighlighter',
@@ -116,15 +133,17 @@ router.get('/compDetails/:comp', (req, res) => {
 				selected.setAttribute("position", position);
 					 */
 				]
-			});
+			};
 			break;
 		case 'explore':
-			res.json({
+			content = {
+				user: req.user,
 				exclude: ['cat'], details: [
 					{
 						"data-cat": "art",
 						element: "a-image",
-						src: basePath + "art.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-art.png",
 						class: "clickable",
 						width: 0.75,
 						height: 0.75,
@@ -133,7 +152,8 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						"data-cat": "mural",
 						element: "a-image",
-						src: basePath + "mural.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-mural.png",
 						class: "clickable",
 						width: 0.75,
 						height: 0.75,
@@ -142,7 +162,8 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						"data-cat": "building",
 						element: "a-image",
-						src: basePath + "building.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-building.png",
 						class: "clickable",
 						width: 0.75,
 						height: 0.75,
@@ -151,7 +172,8 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						"data-cat": "cities",
 						element: "a-image",
-						src: basePath + "citys.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-city.png",
 						class: "clickable",
 						width: 0.75,
 						height: 0.75,
@@ -160,7 +182,8 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						"data-cat": "video",
 						element: "a-image",
-						src: basePath + "video.png",
+						side: 'front',
+						src: "https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/icons/thumb-video.png",
 						class: "clickable",
 						width: 0.75,
 						height: 0.75,
@@ -175,15 +198,17 @@ router.get('/compDetails/:comp', (req, res) => {
 
 					}
 				]
-			});
+			};
 			break;
 		case 'help':
 			// z-axis is being controlled via the root element (see nav.js)
-			res.json({
+			content = {
+				user: req.user,
 				exclude: [],
 				details: [
 					{
 						element: "a-image",
+						side: 'front',
 						src: basePath + "HelpMenu_ver1.png",
 						class: "clickable",
 						width: 10,
@@ -193,7 +218,8 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						id: "userLogout",
 						element: "a-image",
-						src: basePath +"login_signup_Btn.png",
+						side: 'front',
+						src: basePath + "login_signup_Btn.png",
 						class: "clickable",
 						position: {x: 0, y: -2.2, z: 0}
 					},
@@ -206,15 +232,16 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						id: "hideMenus",
 						element: "a-image",
-						src: basePath +"ic_visibility_off_black_48dp_2x.png",
+						side: 'front',
+						src: basePath + "ic_visibility_off_black_48dp_2x.png",
 						class: "clickable",
 						//scale: {x: 1.5, y: 1.5, z: 1.5},
 						position: {x: 3.5, y: -2.2, z: 0}
 					}]
-			});
+			};
 			break;
 		case 'search':
-			res.json({
+			content = {
 				exclude: ['item'], details: [
 					{
 						item: "input",
@@ -228,6 +255,7 @@ router.get('/compDetails/:comp', (req, res) => {
 					{
 						item: "text",
 						element: "a-text",
+						side: 'front',
 						value: "Discover",
 						position: {x: -1.176, y: -0.801, z: -2.944},
 						text: {height: 3}
@@ -251,10 +279,10 @@ router.get('/compDetails/:comp', (req, res) => {
 						position: {x: 0.337, y: 0.075, z: -2.944},
 						scale: {x: 2.0, y: 0.5, z: 0.8}
 					}*/]
-			});
+			};
 			break;
 		case 'login':
-			res.json({
+			content = {
 				exclude: [],
 				details: [{
 					element: "a-input",
@@ -310,10 +338,10 @@ router.get('/compDetails/:comp', (req, res) => {
 						text: {height: 1},
 						scale: {x: 0.5, y: 0.5, z: 0.5}
 					}]
-			});
+			};
 			break;
 		case 'signup':
-			res.json({
+			content = {
 				exclude: [], details: [
 					{
 						id: "textLabel",
@@ -323,7 +351,7 @@ router.get('/compDetails/:comp', (req, res) => {
 						position: {x: -1.176, y: -0.45, z: -2.944}
 					},
 					{
-						id: "username",
+						id: "usernameSignup",
 						element: "a-input",
 						class: "clickable",
 						placeholder: "Username",
@@ -333,7 +361,7 @@ router.get('/compDetails/:comp', (req, res) => {
 						scale: {x: 1.5, y: 1.5, z: 1.5}
 					},
 					{
-						id: "passOne",
+						id: "passOneSignup",
 						element: "a-input",
 						class: "clickable",
 						placeholder: "Password",
@@ -344,7 +372,7 @@ router.get('/compDetails/:comp', (req, res) => {
 						scale: {x: 1.5, y: 1.5, z: 1.5}
 					},
 					{
-						id: "passTwo",
+						id: "passTwoSignup",
 						element: "a-input",
 						class: "clickable",
 						placeholder: "Password",
@@ -374,14 +402,17 @@ router.get('/compDetails/:comp', (req, res) => {
 						scale: {x: 0.5, y: 0.5, z: 0.5}
 					},
 				]
-			});
+			};
 			break;
 		case 'profile-expanded':
-			res.json([]);
+			content = {};
 			break;
 		default:
 			break;
 	}
+
+	content.user = req.user;
+	res.json(content);
 });
 
 

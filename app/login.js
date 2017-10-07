@@ -1,5 +1,6 @@
 /* global AFRAME */
 var axios = require("axios");
+var _ = require('lodash');
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
@@ -15,6 +16,9 @@ AFRAME.registerComponent('login', {
 
 		axios.get(window.location.origin + '/compDetails/login')
 			.then((response) => {
+				if (_.has(response, 'user')) {
+					this.user = response.data.user;
+				}
 				console.log(response);
 				var details = response.data.details;
 				var exclude = response.data.exclude;
@@ -115,8 +119,18 @@ AFRAME.registerComponent('login', {
 							}
 						} else {
 							console.log('login success');
-							document.querySelector('a-image[data-page=profile]').addState('loggedIn');
-							location.hash = 'profile';
+							//window.simpleState.update({loggedIn: true});
+							//document.querySelector('a-image[data-page=profile]').addState('loggedIn');
+							var router = document.querySelector('a-router');
+							//router.addState('LoggedIn');
+							if(router.is('redirect-profile')){
+								document.querySelector('a-entity#nav-attach').emit('navigateTo', {newPage: 'profile-expanded'});
+								location.hash = 'profile-expanded';
+							} else {
+								document.querySelector('a-entity#nav-attach').emit('navigateTo', {newPage: 'explore'});
+								location.hash = 'explore';
+							}
+
 							//document.querySelector('a-image[data-page=explore]').emit('click');
 							//window.location = window.location.origin + "/profile";
 						}

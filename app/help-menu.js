@@ -1,5 +1,6 @@
 /* global AFRAME */
 var axios = require("axios");
+var _ = require('lodash');
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
@@ -17,7 +18,9 @@ AFRAME.registerComponent('help-menu', {
 
 		axios.get(window.location.origin + '/compDetails/help')
 			.then((response) => {
-
+				if (_.has(response, 'user')) {
+					this.user = response.data.user;
+				}
 				var details = response.data.details;
 				var exclude = response.data.exclude;
 				exclude.push('element');

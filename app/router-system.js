@@ -4,6 +4,7 @@ AFRAME.registerSystem('router', {
 		routerEl: {type: 'selector', default: 'a-router'}
 	},
 	init: function () {
+		//console.log(simpleState);
 		window.addEventListener("hashchange", this.emitOnHashChange.bind(this), false);
 		document.addEventListener('readystatechange', this.handleInitialLoad.bind(this));
 	},

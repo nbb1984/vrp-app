@@ -22,103 +22,137 @@ router.get('/geoSearch/All', (req, res) => {
 		})
 });
 
-router.get('/geoSearch/Favorites', (req, res) =>{
-	res.json({
-		"_id": "59ca9e313090c5265896900f",
-		"email": "billy@thing.com",
-		"username": "billybob",
-		"password": "$2a$10$9U.MOmGeA2s2llR836BL5OaAfKy2Rw3ViUTvcrqP/0LIPNGt5eG7q",
-		"__v": 0,
-		"friends": [
-		{
-			"_id": "59ca9e053090c5265896900e",
-			"email": "nickbole@thing.com",
-			"username": "nickbole",
-			"password": "$2a$10$rvKdPyOdbx2V6PuD.4C1FO4gJe3Uw6jnKt8FsBAjvDZxVwKzHrvdy",
-			"__v": 0,
-			"friends": [],
-			"searches": [
-				"59ca9fcde93d9838c8859219",
-				"59cad7501c726213c0747acd",
-				"59cad7ed1c726213c0747ace",
-				"59cae49455a96639802111bd",
-				"59cae66964415823b863761a",]
-		}
-	],
-		"searches": [
-		"59ca9fcde93d9838c8859219",
-		"59cad7501c726213c0747acd",
-		"59cad7ed1c726213c0747ace",
-		"59cae49455a96639802111bd",
-		"59cae66964415823b863761a",
-		{
-			"_id": "59cc221f2c339b2338ee119b",
-			"query": "Wellington, Wellington City, New Zealand",
-			"hits": 3,
-			"__v": 0,
-			"date": "2017-09-27T22:11:43.113Z"
-		}
-	]
-	});
-});
-
-
-
 router.get('/geoSearch/Categories/:cat', (req, res) =>{
 	console.log('category', req.params.cat);
 	switch(req.params.cat){
 		case 'mural':
 			res.json([
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_6.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc1.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc9.jpg", address: ""}
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_1.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_2.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_3.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_4.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_5.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_6.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_7.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_8.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_9.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_10.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_11.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_12.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_13.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_14.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/mural/thumbnail_mural_15.png", address: ""},
 			]);
 			break;
 		case 'art':
 			res.json([
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc9.jpg", address: ""}
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_1.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_2.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_3.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_4.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_5.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_6.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_7.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_8.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_9.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_10.png", address: ""},
+				/*{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_1.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_2.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_3.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_4.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_5.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_6.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_7.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_8.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_9.png", address: ""},
+				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_10.png", address: ""},*/
 			]);
 			break;
 		case 'building':
 			res.json([
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc9.jpg", address: ""}
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_1.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_2.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_3.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_4.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_5.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_6.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_7.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_8.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_9.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/building/thumbnail_building_10.png", address: ""},
 			]);
 			break;
 		case 'cities':
 			res.json([
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_3.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loaction_6.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc1.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc2.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc4.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc5.jpg", address: ""},
-				{lat: 20, lng: 20, src: "thumbnails/images/loc9.jpg", address: ""}
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_1.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_2.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_3.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_4.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_5.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_6.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_7.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_8.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_9.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_10.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_11.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_12.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_13.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_14.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_15.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_16.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_17.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_18.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_19.png", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/city-outdoor/thumbnail_city_20.png", address: ""},
 			]);
 			break;
 		case 'video':
+			res.json([
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Avengers.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Battle_for_the_Avengers_Tower.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_duck_tales.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/DuckTales.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Just_cause_video.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/JUST_CAUSE_3_Trailer.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_rogue_one.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Rogue_One_VR_Experience.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_SF.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4",
+					address: ""},
+/*				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Avengers.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Battle_for_the_Avengers_Tower.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_duck_tales.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/DuckTales.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Just_cause_video.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/JUST_CAUSE_3_Trailer.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_rogue_one.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Rogue_One_VR_Experience.mp4",
+					address: ""},
+				{lat: 20, lng: 20,
+					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_SF.png",
+					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4",
+					address: ""},*/
+/*				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Battle_for_the_Avengers_Tower.mp4", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/DuckTales.mp4", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4", address: ""},
+				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Stranger_Things.mp4", address: ""}*/
+			]);
 			break;
 		default:
 			break;

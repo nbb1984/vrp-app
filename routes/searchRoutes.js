@@ -10,6 +10,8 @@ var path = require("path");
 var geocode = require("./geocode.js");
 var loadPhoto = require("./fileRetrieve.js");
 
+var saveSearchImage = require('./saveImage');
+var getSavedImage = require('./getFromGridfs');
 // Code for uploading pictures
 // ================================================================
 var mongoose = require("mongoose");
@@ -44,11 +46,46 @@ router.get("/EverySearch", function (req, res) {
 });
 //==============================================
 
+router.get('/savedImage/:filename', getSavedImage);
+
+router.post('/saveCollectionImage', (req, res) => {
+
+	var filename = req.body.filename;
+	var user = req.user;
+	console.log('body: ', filename, user);
+	if(!user.saved.includes(filename)){
+		User.findByIdAndUpdate( user._id ,{$push: {saved: filename}} , {new: true})
+			.exec()
+			.then((newdoc) => {
+				console.log("newdoc coming!!!!!", newdoc);
+				//console.log([newdoc, {lat: req.body.lat, lng: req.body.lng, address: result.address}]);
+				//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
+				res.json({ok: true, doc: newdoc});
+				//res.json({ok: true, doc: newdoc});
+			})
+			.catch(err => {
+				res.json({ok: false, err: err});
+				//res.json({ok: false, err: err});
+			})
+	} else {
+		res.json({ok: true, added: false});
+	}
+
+});
+
+
 router.post("/saveSearchImage", (req, res) => {
 	var lat = req.body.lat;
 	var lng = req.body.lng;
 	if(req.user){
-		var imageBufferAndDetails = decode(req.body.image);
+		saveSearchImage(req)
+			.then(response => {
+				res.json({ok: true, doc: response})
+			})
+			.catch(err => {
+				console.log(err);
+			})
+/*		var imageBufferAndDetails = decode(req.body.image);
 		saveInMongo(lat, lng, imageBufferAndDetails.dataBuffer)
 			.then(response => {
 				console.log('save in mongo response', response);
@@ -68,9 +105,9 @@ router.post("/saveSearchImage", (req, res) => {
 			.catch(err => {
 				res.json({ok: false});
 				console.log('err', err);
-			});
+			});*/
 	} else {
-		res.json({ok: false, userError: "Must be logged in to search.  Check out the curated collections!"})
+		res.json({ok: false, userError: "Must be logged in to save.  Check out the curated collections!"})
 	}
 
 	//res.end();
@@ -151,28 +188,22 @@ router.post("/search", function (req, res) {
 				res.json({ok: false, err: err})
 			})
 	} else {
-		res.json({ok: false, userError: "Must be logged in to search.  Check out the curated collections!"})
-	}
-	/*try {
-		if (req.user) {
-			if (req.body.source === 'text') {
-				viaLocationQuery(req.body.query, req.user)
-					.then(response => {
-						res.json(response)
-					})
-					.catch(err => {
-						// send any errors to the browser
-						res.send(err);
-					})
-			} else {
-				viaCoordinates(req.body.coords, user)
+		geocode.getCoordsAndAddress(req.body.query, function (err, result) {
+			if (err) {
+				console.log('error running geocode', err);
+				res.json({ok: false, err: err})
 			}
-
-		}
-	} catch (err) {
-		console.log(err);
-	}*/
-
+			res.json({ok: true, details: result});
+		});
+/*		viaLocationQuery(req.body.query, req.user)
+			.then(response => {
+				res.json(response);
+			})
+			.catch(err => {
+				res.json({ok: false, err: err})
+			})*/
+		//res.json({ok: false, userError: "Must be logged in to search.  Check out the curated collections!"})
+	}
 });
 
 

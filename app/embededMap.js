@@ -1,5 +1,6 @@
 /* global AFRAME */
 var axios = require("axios");
+var _ = require('lodash');
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
@@ -37,7 +38,12 @@ AFRAME.registerComponent('map-overlay', {
 
 		this.el.addEventListener('gotLocation', function(event){
 			console.log('gotLocation Event: ', event);
-		})
+		});
+
+		this.el.addEventListener('goToLocation', function(event) {
+			this.addMarker(event.detail.currentLocation);
+			map.panTo(event.detail.currentLocation);
+		}.bind(this))
 
 	},
 

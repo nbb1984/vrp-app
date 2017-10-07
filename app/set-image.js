@@ -9,7 +9,7 @@ AFRAME.registerComponent('set-image', {
     on: {type: 'string'},
     target: {type: 'selector'},
     src: {type: 'string'},
-    dur: {type: 'number', default: 300}
+    dur: {type: 'number', default: 500}
   },
 
   init: function () {
@@ -18,7 +18,7 @@ AFRAME.registerComponent('set-image', {
 
     this.setupFadeAnimation();
 
-    el.addEventListener(data.on, function () {
+/*    el.addEventListener(data.on, function () {
       // Fade out image.
       data.target.emit('set-image-fade');
       // Wait for fade to complete.
@@ -26,7 +26,7 @@ AFRAME.registerComponent('set-image', {
         // Set image.
         data.target.setAttribute('material', 'src', data.src);
       }, data.dur);
-    });
+    });*/
   },
 
   /**
@@ -43,11 +43,11 @@ AFRAME.registerComponent('set-image', {
     targetEl.dataset.setImageFadeSetup = true;
 
     // Create animation.
-    targetEl.setAttribute('animation__fade', {
+    targetEl.setAttribute('animation__fadeImage', {
       property: 'material.color',
       startEvents: 'set-image-fade',
       dir: 'alternate',
-      dur: data.dur,
+      dur: 1000,
       from: '#FFF',
       to: '#000'
     });
