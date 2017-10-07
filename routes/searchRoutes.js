@@ -32,8 +32,8 @@ module.exports = router;
 router.get("/EverySearch", function (req, res) {
 
 	Search.find({}).sort([
-			["hits", "descending"]
-		])
+		["hits", "descending"]
+	])
 		.exec(function (error, doc) {
 			if (error) {
 				console.log(error);
@@ -53,8 +53,8 @@ router.post('/saveCollectionImage', (req, res) => {
 	var filename = req.body.filename;
 	var user = req.user;
 	console.log('body: ', filename, user);
-	if(!user.saved.includes(filename)){
-		User.findByIdAndUpdate( user._id ,{$push: {saved: filename}} , {new: true})
+	if (!user.saved.includes(filename)) {
+		User.findByIdAndUpdate(user._id, {$push: {saved: filename}}, {new: true})
 			.exec()
 			.then((newdoc) => {
 				console.log("newdoc coming!!!!!", newdoc);
@@ -77,7 +77,7 @@ router.post('/saveCollectionImage', (req, res) => {
 router.post("/saveSearchImage", (req, res) => {
 	var lat = req.body.lat;
 	var lng = req.body.lng;
-	if(req.user){
+	if (req.user) {
 		saveSearchImage(req)
 			.then(response => {
 				res.json({ok: true, doc: response})
@@ -85,27 +85,27 @@ router.post("/saveSearchImage", (req, res) => {
 			.catch(err => {
 				console.log(err);
 			})
-/*		var imageBufferAndDetails = decode(req.body.image);
-		saveInMongo(lat, lng, imageBufferAndDetails.dataBuffer)
-			.then(response => {
-				console.log('save in mongo response', response);
-				User.findOneAndUpdate({"_id": req.user._id}, {$addToSet: {"saved": response.filename}}, {new: true})
-					.exec()
-					.then((newdoc) => {
-						console.log("newdoc coming!!!!!");
-						console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
-						//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
-						res.json({ok: true, doc: newdoc});
+		/*		var imageBufferAndDetails = decode(req.body.image);
+				saveInMongo(lat, lng, imageBufferAndDetails.dataBuffer)
+					.then(response => {
+						console.log('save in mongo response', response);
+						User.findOneAndUpdate({"_id": req.user._id}, {$addToSet: {"saved": response.filename}}, {new: true})
+							.exec()
+							.then((newdoc) => {
+								console.log("newdoc coming!!!!!");
+								console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
+								//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
+								res.json({ok: true, doc: newdoc});
+							})
+							.catch(err => {
+								//reject(err);
+								res.json({ok: false, err: err});
+							})
 					})
 					.catch(err => {
-						//reject(err);
-						res.json({ok: false, err: err});
-					})
-			})
-			.catch(err => {
-				res.json({ok: false});
-				console.log('err', err);
-			});*/
+						res.json({ok: false});
+						console.log('err', err);
+					});*/
 	} else {
 		res.json({ok: false, userError: "Must be logged in to save.  Check out the curated collections!"})
 	}
@@ -137,7 +137,7 @@ function saveInMongo(lat, lng, image) {
 
 		// Here we insert the code for gridfs
 		var gfs = Grid(db.db);
-		var fileName =  lat + lng + '.png';
+		var fileName = lat + lng + '.png';
 
 		gfs.exist({filename: fileName}, function (err, found) {
 			if (err) {
@@ -188,20 +188,28 @@ router.post("/search", function (req, res) {
 				res.json({ok: false, err: err})
 			})
 	} else {
-		geocode.getCoordsAndAddress(req.body.query, function (err, result) {
+		geocode.getCoordsAndAddress(req.body.query)
+			.then((response) => {
+				res.json({ok: true, details: response});
+			})
+			.catch(err => {
+				res.json({ok: false, err: err})
+			})
+
+		/*	, function (err, result) {
 			if (err) {
 				console.log('error running geocode', err);
 				res.json({ok: false, err: err})
 			}
-			res.json({ok: true, details: result});
-		});
-/*		viaLocationQuery(req.body.query, req.user)
-			.then(response => {
-				res.json(response);
-			})
-			.catch(err => {
-				res.json({ok: false, err: err})
-			})*/
+
+		});*/
+		/*		viaLocationQuery(req.body.query, req.user)
+					.then(response => {
+						res.json(response);
+					})
+					.catch(err => {
+						res.json({ok: false, err: err})
+					})*/
 		//res.json({ok: false, userError: "Must be logged in to search.  Check out the curated collections!"})
 	}
 });
@@ -209,11 +217,9 @@ router.post("/search", function (req, res) {
 
 function viaLocationQuery(locQuery, user) {
 	return new Promise((resolve, reject) => {
-		geocode.getCoordsAndAddress(locQuery, function (err, result) {
-			if(err){
-				console.log('error running geocode', err);
-				reject(err);
-			}
+		geocode.getCoordsAndAddress(locQuery)
+			.then((result) => {
+
 			Search
 				.findOneAndUpdate({
 					"address": result.address
@@ -229,7 +235,7 @@ function viaLocationQuery(locQuery, user) {
 						var newSearch = new Search({
 							"address": result.address,
 							"fsPicturePath": fsPicPath,
-							"coords": result.lat +','+ result.lng,
+							"coords": result.lat + ',' + result.lng,
 							"lat": result.lat,
 							"lng": result.lng,
 							"hits": 1
@@ -247,8 +253,16 @@ function viaLocationQuery(locQuery, user) {
 										.exec()
 										.then((newdoc) => {
 											console.log("newdoc coming!!!!!");
-											console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
-											resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
+											console.log([newdoc, {
+												lat: result.lat,
+												lng: result.lng,
+												address: result.address
+											}]);
+											resolve({
+												ok: true,
+												doc: newdoc,
+												details: {lat: result.lat, lng: result.lng, address: result.address}
+											})
 										})
 										.catch(err => {
 											reject(err);
@@ -266,7 +280,11 @@ function viaLocationQuery(locQuery, user) {
 							.then((newdoc) => {
 								console.log("newdoc coming!!!!");
 								console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
-								resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
+								resolve({
+									ok: true,
+									doc: newdoc,
+									details: {lat: result.lat, lng: result.lng, address: result.address}
+								})
 							})
 							.catch(err => {
 								reject(err);
@@ -275,6 +293,9 @@ function viaLocationQuery(locQuery, user) {
 
 				});
 		})
+			.catch(err => {
+				reject(err);
+			})
 	})
 }
 

@@ -1,7 +1,7 @@
 var https = require("https");
 
 module.exports.getCoordsAndAddress = function(search, callback) {
-    try{
+    return new Promise((resolve, reject) => {
 	    var searchResult = search;
 	    var url =
 		    "https://maps.googleapis.com/maps/api/geocode/json?address=" + searchResult;
@@ -22,14 +22,18 @@ module.exports.getCoordsAndAddress = function(search, callback) {
 			    let lng = body.results[0].geometry.location.lng;
 			    let location = body.results[0].formatted_address;
 			    console.log(location);
-			    callback(null, {lat: lat, lng: lng, address: location});
+			    resolve({lat: lat, lng: lng, address: location});
+			    //callback(null, {lat: lat, lng: lng, address: location});
 
 
 		    });
+
+		    res.on('error', () => {
+		    	reject();
+			})
 	    });
-    } catch (err){
-        callback(err);
-    }
+
+    });
 
 };
 

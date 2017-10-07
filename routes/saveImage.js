@@ -24,10 +24,10 @@ function saveImage(req) {
 			.then(response => {
 				//if(response.added){
 					console.log('save in mongo response', response);
-					User.findOneAndUpdate({"_id": user._id}, user.saved.addToSet(response.filename), {new: true})
+					User.findOneAndUpdate({"_id": user._id}, {$push: {saved: response.filename}}, {new: true})
 						.exec()
 						.then((newdoc) => {
-							console.log("newdoc coming!!!!!");
+							console.log("newdoc coming!!!!!", newdoc);
 							//console.log([newdoc, {lat: req.body.lat, lng: req.body.lng, address: result.address}]);
 							//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
 							resolve(newdoc);

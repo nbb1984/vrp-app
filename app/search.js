@@ -20,7 +20,8 @@ AFRAME.registerComponent('search', {
 		axios.get(window.location.origin + '/compDetails/search')
 			.then((response) => {
 				if (_.has(response, 'user')) {
-					this.user = response.data.user;
+				//	this.user = response.data.user;
+					document.querySelector('a-router').addState('LoggedIn');
 				}
 				var details = response.data.details;
 				var exclude = response.data.exclude;
@@ -351,7 +352,7 @@ AFRAME.registerComponent('search', {
 
 			this.hideMap();
 
-			if (this.user) this.showSaveButton();
+			this.showSaveButton();
 		} else {
 			// inform user no image was found
 		}

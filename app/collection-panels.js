@@ -78,9 +78,9 @@ AFRAME.registerComponent('collection-panels', {
 		var queryUrl = baseUrl + '/geoSearch/Categories/' + data.collection;
 		axios.get(queryUrl)
 			.then(response => {
-				if (_.has(response, 'user')) {
+				/*if (_.has(response, 'user')) {
 					this.user = response.data.user;
-				}
+				}*/
 				if(data.collection !== 'video'){
 					document.querySelector('a-sky').setAttribute('visible', 'true');
 					var vid = document.querySelector('a-videosphere');
@@ -175,9 +175,9 @@ AFRAME.registerComponent('collection-panels', {
 						this.el.setAttribute('data-image-save', event.detail.shown);
 						var router = document.querySelector('a-router');
 						if (router) {
-							if (this.user) {
+							//if (this.user) {
 								this.showSaveButton()
-							}
+							//}
 						}
 					}.bind(this));
 
@@ -243,7 +243,7 @@ AFRAME.registerComponent('collection-panels', {
 	},
 
 	showSaveButton: function () {
-		if (this.user) {
+		//if (this.user) {
 			if (!document.querySelector('a-image#saveButton')) {
 				var saveBtn = document.createElement('a-image');
 				saveBtn.setAttribute('id', 'saveButton');
@@ -255,7 +255,7 @@ AFRAME.registerComponent('collection-panels', {
 				//saveBtn.setAttribute('scale', {x: 2.0, y: 0.8, z: 0.8});
 				saveBtn.addEventListener('click', this.savePic.bind(this));
 				this.el.appendChild(saveBtn);
-			}
+		//	}
 		}
 
 	},
