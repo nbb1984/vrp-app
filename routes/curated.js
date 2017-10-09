@@ -56,16 +56,6 @@ router.get('/geoSearch/Categories/:cat', (req, res) =>{
 				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_8.png", address: ""},
 				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_9.png", address: ""},
 				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/art/art_10.png", address: ""},
-				/*{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_1.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_2.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_3.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_4.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_5.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_6.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_7.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_8.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_9.png", address: ""},
-				{lat: 20, lng: 20, src:"https://raw.githubusercontent.com/SteveMieskoski/vrp-app_assets/master/art/art_10.png", address: ""},*/
 			]);
 			break;
 		case 'building':
@@ -128,36 +118,13 @@ router.get('/geoSearch/Categories/:cat', (req, res) =>{
 					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_SF.png",
 					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4",
 					address: ""},
-/*				{lat: 20, lng: 20,
-					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Avengers.png",
-					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Battle_for_the_Avengers_Tower.mp4",
-					address: ""},
-				{lat: 20, lng: 20,
-					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_duck_tales.png",
-					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/DuckTales.mp4",
-					address: ""},
-				{lat: 20, lng: 20,
-					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_Just_cause_video.png",
-					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/JUST_CAUSE_3_Trailer.mp4",
-					address: ""},
-				{lat: 20, lng: 20,
-					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_rogue_one.png",
-					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Rogue_One_VR_Experience.mp4",
-					address: ""},
-				{lat: 20, lng: 20,
-					src:"https://cdn.rawgit.com/SteveMieskoski/vrp-app_assets/master/video/thumbnail_SF.png",
-					uri: "https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4",
-					address: ""},*/
-/*				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Battle_for_the_Avengers_Tower.mp4", address: ""},
-				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/DuckTales.mp4", address: ""},
-				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/The_Martian_VR_Experience.mp4", address: ""},
-				{lat: 20, lng: 20, src:"https://cdn.rawgit.com/wvazquez216/VRP_test_video/a52ed564/Stranger_Things.mp4", address: ""}*/
 			]);
 			break;
 		default:
 			break;
 	}
 });
+/*
 
 router.post('/geoSearch', (req, res) => {
 	var newThing = new CuratedContent({
@@ -174,9 +141,4 @@ router.post('/geoSearch', (req, res) => {
 		});
 });
 
-
-function saveContent(content) {
-	var newThing = new CuratedContent(content);
-	return newThing
-
-};
+*/

@@ -49,23 +49,16 @@ router.get("/EverySearch", function (req, res) {
 router.get('/savedImage/:filename', getSavedImage);
 
 router.post('/saveCollectionImage', (req, res) => {
-
 	var filename = req.body.filename;
 	var user = req.user;
-	console.log('body: ', filename, user);
 	if (!user.saved.includes(filename)) {
 		User.findByIdAndUpdate(user._id, {$push: {saved: filename}}, {new: true})
 			.exec()
 			.then((newdoc) => {
-				console.log("newdoc coming!!!!!", newdoc);
-				//console.log([newdoc, {lat: req.body.lat, lng: req.body.lng, address: result.address}]);
-				//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
 				res.json({ok: true, doc: newdoc});
-				//res.json({ok: true, doc: newdoc});
 			})
 			.catch(err => {
 				res.json({ok: false, err: err});
-				//res.json({ok: false, err: err});
 			})
 	} else {
 		res.json({ok: true, added: false});
@@ -75,8 +68,6 @@ router.post('/saveCollectionImage', (req, res) => {
 
 
 router.post("/saveSearchImage", (req, res) => {
-	var lat = req.body.lat;
-	var lng = req.body.lng;
 	if (req.user) {
 		saveSearchImage(req)
 			.then(response => {
@@ -85,87 +76,11 @@ router.post("/saveSearchImage", (req, res) => {
 			.catch(err => {
 				console.log(err);
 			})
-		/*		var imageBufferAndDetails = decode(req.body.image);
-				saveInMongo(lat, lng, imageBufferAndDetails.dataBuffer)
-					.then(response => {
-						console.log('save in mongo response', response);
-						User.findOneAndUpdate({"_id": req.user._id}, {$addToSet: {"saved": response.filename}}, {new: true})
-							.exec()
-							.then((newdoc) => {
-								console.log("newdoc coming!!!!!");
-								console.log([newdoc, {lat: result.lat, lng: result.lng, address: result.address}]);
-								//resolve({ok: true, doc: newdoc, details: {lat: result.lat, lng: result.lng, address: result.address}})
-								res.json({ok: true, doc: newdoc});
-							})
-							.catch(err => {
-								//reject(err);
-								res.json({ok: false, err: err});
-							})
-					})
-					.catch(err => {
-						res.json({ok: false});
-						console.log('err', err);
-					});*/
 	} else {
 		res.json({ok: false, userError: "Must be logged in to save.  Check out the curated collections!"})
 	}
-
-	//res.end();
 });
 
-
-function decode(dataURI) {
-	if (!/data:image\//.test(dataURI)) {
-		console.log('ImageDataURI :: Error :: It seems that it is not an Image Data URI. Couldn\'t match "data:image\/"');
-		return null;
-	}
-	/*	let infoParts = dataURI.slice(0,40);
-		let regExMatches = infoParts.match('data:image/(.*);base64,(.*)');
-		console.log(regExMatches);*/
-	let regExMatches = dataURI.match('data:image/(.*);base64,(.*)');
-	return {
-		imageType: regExMatches[1],
-		dataBase64: regExMatches[2],
-		dataBuffer: new Buffer(regExMatches[2], 'base64')
-	};
-}
-
-function saveInMongo(lat, lng, image) {
-	return new Promise((resolve, reject) => {
-		Grid.mongo = mongoose.mongo;
-		/*	var picturePath = "http://maps.googleapis.com/maps/api/streetview?size=600x300&location=" + coords + "%20CA&heading=151.78&pitch=-0.76&key=AIzaSyBh7H5H3lLRSftfGQAN7c8k18sFjYYB0Uw";*/
-
-		// Here we insert the code for gridfs
-		var gfs = Grid(db.db);
-		var fileName = lat + lng + '.png';
-
-		gfs.exist({filename: fileName}, function (err, found) {
-			if (err) {
-				reject(err);
-				//return handleError(err);
-			}
-			if (!found) {
-				var writestream = gfs.createWriteStream({
-					filename: fileName
-				});
-
-				new BufferStream(image).pipe(writestream);
-				/*var request = http.get(image, function(response) {
-					response.pipe(writestream);
-				});*/
-
-				writestream.on('close', function (file) {
-					console.log(file);
-					console.log(fileName + " Written to db");
-					resolve({filename: fileName, file: file});
-				});
-			} else {
-				resolve(lat + lng + " already exists ");
-			}
-
-		});
-	})
-}
 
 //==============================================
 
@@ -195,7 +110,7 @@ router.post("/search", function (req, res) {
 			.catch(err => {
 				res.json({ok: false, err: err})
 			})
-
+		// (below commented out as stop-gap for initial presentaion)
 		/*	, function (err, result) {
 			if (err) {
 				console.log('error running geocode', err);

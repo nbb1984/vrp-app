@@ -6,21 +6,6 @@ AFRAME.registerComponent('router', {
 		this.el.addEventListener('navigate', this.navigate.bind(this));
 		this.el.addEventListener('initialPage', this.navigate.bind(this))
 	},
-	update: function () {
-		console.log('router component update method', this.system);
-	},
-	remove: function () {
-	},
-	tick: function (time, timeDelta) {
-	},
-	pause: function () {
-	},
-	play: function () {
-	},
-	updateSchema: function (data) {
-	},
-
-
 	navigate: function (event) {
 		var page = event.detail.page;
 		var oldContent = this.el.children;
@@ -35,13 +20,7 @@ AFRAME.registerComponent('router', {
 			keybrd.parentNode.removeChild(keybrd);
 		}
 		console.log('page on: ', page);
-		/*var priorContent = document.querySelector('a-entity#content-root');
-		if (priorContent) {
-			priorContent.parentNode.removeChild(priorContent);
-		} else {
-			//page = 'explore';
-		}*/
-		var root, keyboard;
+
 		switch (page) {
 			case 'explore':
 				this.buildExplorePage();

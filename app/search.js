@@ -15,14 +15,12 @@ AFRAME.registerComponent('search', {
 	},
 
 	init: function () {
-		//console.log(window.simpleState);
 		var data = this.data;
 		var el = this.el;
 		this.loggedIn = document.querySelector('a-router').is('LoggedIn');
 		axios.get(window.location.origin + '/compDetails/search')
 			.then((response) => {
 				if (_.has(response, 'user')) {
-				//	this.user = response.data.user;
 					document.querySelector('a-router').addState('LoggedIn');
 				}
 				var details = response.data.details;
@@ -40,11 +38,9 @@ AFRAME.registerComponent('search', {
 						newEl.addEventListener('click', (event) => {
 							var input = document.querySelector('a-input');
 							var queryTerm = input.value;
-							//this.getPic();
-							this.runQueryBackEnd('eiffel tower');
 							if (queryTerm) {
 								if (queryTerm.length > 0) {
-									//	this.runQuery(queryTerm);
+									this.runQuery(queryTerm);
 								}
 							}
 							console.log(input.value);
@@ -80,6 +76,7 @@ AFRAME.registerComponent('search', {
 			});
 	},
 
+	// clean up listeners when the component is removed from the dom/scene
 	remove: function () {
 		var scene = document.querySelector('a-scene');
 		scene.removeEventListener('keyboardIsOpen', this.keyboardOpen.bind(this));
@@ -87,6 +84,8 @@ AFRAME.registerComponent('search', {
 		scene.removeEventListener('gotLocation', this.mapCoordinates.bind(this));
 	},
 
+
+	// add the show map button and animate the input field when the keyboard is hidden
 	keyboardOpen: function () {
 		this.el.emit("keyboardIsOpenMove");
 		let isMobile = AFRAME.utils.device.isMobile();
@@ -108,14 +107,15 @@ AFRAME.registerComponent('search', {
 		}
 	},
 
+	// remove the show map button and animate the input field when the keyboard is hidden
 	keyboardClosed: function () {
 		this.el.emit("keyboardIsClosedMove");
 		var mapBtn = document.querySelector('a-button#mapButton');
 		this.tryRemoveElement(mapBtn);
-		//if (mapBtn) mapBtn.parentNode.removeChild(mapBtn);
 	},
 
 
+	// show the 'overlay-map' (produced via the map-overlay component)
 	showMap: function (updateOnly) {
 		console.log('show map');
 		var root, mapEl, mapBtn;
@@ -133,8 +133,9 @@ AFRAME.registerComponent('search', {
 		}
 	},
 
+	// hide the 'overlay-map
 	hideMap: function () {
-		var root, mapEl, mapBtn;
+		var mapEl, mapBtn;
 		if (document.querySelector('a-entity#mapElement')) {
 			mapEl = document.querySelector('a-entity#mapElement');
 			mapEl.parentNode.removeChild(mapEl);
@@ -143,42 +144,18 @@ AFRAME.registerComponent('search', {
 		}
 	},
 
-	getMyLocation: function () {
-		var el = document.getElementById('myLocationButton');
-		el.addEventListener('click', function (event) {
-			event.preventDefault();
-			navigator.geolocation.getCurrentPosition(geoSuccess, geoError);
-		}, false);
-	},
-
-	geoSuccess: function (position) {
-
-		var currentLocation = new google.maps.LatLng(position.coords.latitude, position.coords.longitude);
-		var isMapPresent = document.querySelector('a-entity#mapElement');
-		if(isMapPresent){
-			isMapPresent.emit('goToLocation', {currentLocation: currentLocation});
-			// move to position (thanks @theCole!)
-		}
 
 
-	},
-
-
+	// get the coordinates when a user clicks on the html map 'overlay'
 	mapCoordinates: function (event) {
 		// USING THE MAP ALSO HAS SOME BUGS/GOTCHAS.  MAP GOING BLANK  NOT RECOVERING, AND NO RESULTS;
-		console.log(event);
 		var lat = event.detail.lat;
 		var lng = event.detail.lng;
 		this.getPic(lat, lng);
-		/*	var baseUrl = window.location.origin;
-			var queryUrl = baseUrl + '/searchThumbCoords/' + lat +"/"+ lng;
-			return axios.get(queryUrl).then((response) => {
-				console.log(response);
-				this.showPic(response.data.url)
-			})*/
 	},
 
 
+	 // Send the search query to the server to request the related latitude and longitude;
 	runQueryBackEnd: function (location) {
 		var errorMsg = document.querySelector('a-entity#errorMsg');
 		if (errorMsg) {
@@ -186,10 +163,8 @@ AFRAME.registerComponent('search', {
 		}
 
 		this.el.addState('newSearch');
-		console.log(location);
 		return axios.post(window.location.origin + '/search', {query: location})
 			.then((response) => {
-				console.log(response);
 				if (response.data.ok) {
 					this.getPic(response.data.details.lat, response.data.details.lng);
 				} else {
@@ -200,96 +175,29 @@ AFRAME.registerComponent('search', {
 						console.log('not logged in');
 					}
 				}
-
-
-				/*var placeName = response.data[1].address.replace(/\s*!/, "+");
-				//this.runQuery(encodeURI(placeName));
-				var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
-				axios.get(getImage)
-					.then((response) => {
-						console.log(response);
-					})
-					.catch(err => {
-						console.log(err);
-					})*/
 			});
 
 	},
 
-	saveImage: function () {
-		var sky = document.querySelector('a-sky');
-		var lat = sky.getAttribute('data-lat');
-		var lng = sky.getAttribute('data-lng');
-		var src = sky.getAttribute('src');
-		axios.get(src)
-			.then((response) => {
-				console.log(response);
-			});
-		var baseUrl = window.location.origin;
-		var queryUrl = baseUrl + '/search-save';
-		return axios.post(queryUrl, {query: location}).then((response) => {
-			console.log(response);
-			var getImage = baseUrl + '/save/photo/' + response.data[1].coords + '/' + response.data[1].address;
-			axios.get(getImage)
-				.then((response) => {
-					console.log(response);
-				})
-				.catch(err => {
-					console.log(err);
-				})
 
-		});
-	},
+	// attempt to retrieve the image corresponding to the lat and lng obtained from google geocode api
 
-
-	runQuery: function (location) {
-		console.log(location);
-		var geocodeAPI = "4f03af1a1ea4428891dd006b61a9b4be";
-		// Figure out the geolocation
-		var queryURL = "http://api.opencagedata.com/geocode/v1/json?query=" + location + "&min_confidence=9&pretty=1&key=" + geocodeAPI;
-		return axios.get(queryURL).then((response) => {
-			console.log(response);
-			// If get get a result, return that result's formatted address property
-			if (response.data.results[0]) {
-				var lat = response.data.results[0].geometry.lat;
-				var lng = response.data.results[0].geometry.lng;
-				console.log(response.data.results[0].geometry);
-				console.log(lat);
-				console.log(lng);
-				//var newImage = this.getPic(lat, lng);
-				this.getPic(lat, lng);
-
-
-				//this.getPic();
-				//return response.data.results[0];
-			}
-			// If we don't get any results, return an empty string
-			$("a-text#noresults")
-			//return "";
-		});
-	},
-
-	// Google Street view only returns an image if the lat/long (location) is near enough (corresponds) to
-	// A location which is a street and where a street view image exists.
 	getPic: function (queryLat, queryLng) {
 		// todo plug in a different means of informing user that no results exist
 		var zoom = 1;
-
+		// Google Street view only returns an image if the lat/long (location) is near enough (corresponds) to
+		// A location which is a street and where a street view image exists.
 		var lat = queryLat || 32.472170; //41.5044381; //39.9495073;//41.5044381; //32.472170;
 		var lng = queryLng || 34.996909;//-81.6068944; //-75.1506225;//-81.6068944; //34.996909;
 		var loader = new GSVPANO.PanoLoader({zoom: zoom});
-		//var loader = GSVPANO.PanoLoader({zoom: zoom});
 
+		// handle obtained image or error
 		loader.onPanoramaLoad = (data) => {
 			try {
-				// did not think of creating a canvas element to hold the image but never attaching it to the DOM
-				console.log(data);
 				var newImage = data.toDataURL();
-				console.log("LOADED:", data);
 				this.showPic(newImage, lat, lng);
 			} catch (err) {
 				console.log(err);
-				//this.errorMsg(message);
 				this.onGetPicError("No Result.  Here is a Random View!");
 			}
 		};
@@ -300,12 +208,14 @@ AFRAME.registerComponent('search', {
 		// Set error handle.
 		loader.onError = (message) => {
 			this.onGetPicError(message);
-			//this.errorMsg(message);
-			//alert(message); // todo plug in a different means of informing user that no results exist
 			return null;
 		}
 
 	},
+
+
+
+	// Display One from a list of pre-selected images when an image for the search location fails to produce a result;
 
 	onGetPicError: function (message) {
 		this.errorMsg(message);
@@ -325,8 +235,10 @@ AFRAME.registerComponent('search', {
 
 	errorMsg: messageDisplay,
 
+
+	 // Display the dataURL and note the related lat and lng for possible image save
 	showPic: function (newImage, lat, lng) {
-		console.log('newImage');
+		// track if the image returned is from a user query or a 'not found' random placeholder
 		if (this.el.is('newSearch')) {
 			this.el.removeState('newSearch');
 		}
@@ -336,7 +248,6 @@ AFRAME.registerComponent('search', {
 			$('a-sky').attr('data-lng', lng);
 
 			this.hideMap();
-
 			this.showSaveButton();
 		} else {
 			// inform user no image was found
@@ -382,10 +293,10 @@ AFRAME.registerComponent('search', {
 	},
 
 	tryRemoveElement: function (element) {
-		if (!element) {
-			return;
-		}
+		if (!element) return;
 		element.parentNode.removeChild(element);
-	}
+	},
+
+
 
 });
