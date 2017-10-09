@@ -2,6 +2,8 @@
 var axios = require("axios");
 var GSVPANO = require('../lib/GSVPano');
 var _ = require('lodash');
+
+var messageDisplay = require('./display-errors');
 /**
  * GOOGLE MAP WILL ONLY SHOW IF THE URL IS NOT A HASH URL.
  * A STREET VIEW IMAGE WILL ONLY BE FOUND IF THE COORDINATES USED LIE ON A STREET (OR AT LEAST VERY VERY CLOSE [I THINK])
@@ -321,24 +323,7 @@ AFRAME.registerComponent('search', {
 		}
 	},
 
-	errorMsg: function (errorMessage) {
-		var priorError = document.querySelector('a-entity#errorMsg');
-		this.tryRemoveElement(priorError);
-		var messageContainer = document.createElement('a-entity');
-		messageContainer.setAttribute('id', 'errorMsg');
-
-		console.log(errorMessage);
-		var msgPlane = document.createElement('a-entity');
-		msgPlane.setAttribute('zOffset', '0.01');
-		msgPlane.setAttribute('geometry', "primitive: plane; height: auto; width: 5");
-		msgPlane.setAttribute('material', "color: red; transparent: true; opacity: 0.4");
-		msgPlane.setAttribute('text', "value:" + errorMessage + "; color: white");
-		msgPlane.setAttribute('position', {x: 7, y: 0, z: -4});
-		msgPlane.setAttribute('rotation', {x: 0, y: -30, z: 0});
-		messageContainer.appendChild(msgPlane);
-
-		this.el.appendChild(messageContainer);
-	},
+	errorMsg: messageDisplay,
 
 	showPic: function (newImage, lat, lng) {
 		console.log('newImage');

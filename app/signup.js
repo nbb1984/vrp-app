@@ -1,6 +1,7 @@
 /* global AFRAME */
 var axios = require("axios");
 var _ = require('lodash');
+var messageDisplay = require('./display-errors');
 /**
  * Component that listens to an event, fades out an entity, swaps the texture, and fades it
  * back in.
@@ -143,21 +144,5 @@ AFRAME.registerComponent('signup', {
 		}
 	},
 
-	errorMsg: function (errorArray) {
-		var messageContainer = document.createElement('a-entity');
-		messageContainer.setAttribute('id', 'errorMsg');
-
-		for (var i = 0; i < errorArray.length; i++) {
-			console.log(errorArray[i].msg);
-			var msgPlane = document.createElement('a-entity');
-			msgPlane.setAttribute('zOffset', '0.01');
-			msgPlane.setAttribute('geometry', "primitive: plane; height: auto; width: 5");
-			msgPlane.setAttribute('material', "color: red; transparent: true; opacity: 0.4");
-			msgPlane.setAttribute('text', "value:" + errorArray[i].msg + "; color: white");
-			msgPlane.setAttribute('position', {x: 7, y: i, z: -4});
-			msgPlane.setAttribute('rotation', {x: 0, y: -30, z: 0});
-			messageContainer.appendChild(msgPlane);
-		}
-		document.querySelector('a-scene').appendChild(messageContainer);
-	}
+	errorMsg: messageDisplay
 });

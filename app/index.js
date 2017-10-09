@@ -10,6 +10,7 @@
 	require('./router-system');
 	require('./router');
 	require('./manhole');
+	require('./hide-menus');
 	require('./nav');
 	require('./category-nav');
 	require('./collection-panels');
